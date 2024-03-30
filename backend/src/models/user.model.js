@@ -1,26 +1,49 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const userSchema = new mongoose.Schema(
   {
+    fullName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     email: {
-      type: "String",
+      type: String,
       required: true,
       lowercase: true,
       unique: true,
       index: true,
     },
     username: {
-      type: "String",
+      type: String,
       required: true,
       lowercase: true,
       unique: true,
       index: true,
     },
     password: {
-      type: "String",
+      type: String,
       required: true,
+    },
+    bio: {
+      type: String,
+    },
+    avatar: {
+      type: String,
+    },
+    coverImage: {
+      type: String,
+    },
+    userPosts: {
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Post",
+        },
+      ],
     },
     refreshToken: {
       type: String,
@@ -47,6 +70,7 @@ userSchema.methods.generateAccessToken = function () {
     {
       _id: this._id,
       username: this.username,
+      email: this.email,
     },
     process.env.ACCESS_TOKEN_SECRET,
     {
@@ -66,5 +90,7 @@ userSchema.methods.generateRefreshToken = function () {
     }
   );
 };
+
+userSchema.plugin(mongooseAggregatePaginate);
 
 export const User = mongoose.model("User", userSchema);
