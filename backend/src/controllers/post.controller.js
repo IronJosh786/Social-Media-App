@@ -63,15 +63,8 @@ const getPostById = asyncHandler(async (req, res) => {
     },
     {
       $addFields: {
-        likedByDetails: {
-          $first: "$likesOnPost.likedBy",
-        },
-      },
-    },
-    {
-      $addFields: {
         totalLikeCount: {
-          $size: "$likedByDetails",
+          $size: "$likesOnPost",
         },
       },
     },
@@ -125,7 +118,6 @@ const getPostById = asyncHandler(async (req, res) => {
     {
       $project: {
         likesOnPost: 0,
-        likedByDetails: 0,
       },
     },
   ]);
