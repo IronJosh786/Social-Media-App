@@ -122,13 +122,13 @@ const getPostById = asyncHandler(async (req, res) => {
     },
   ]);
 
-  if (!post) {
+  if (!post.length) {
     return res.status(404).json({ message: "Post not found" });
   }
 
   return res
     .status(200)
-    .json({ message: "Fetched the post details", data: post });
+    .json({ message: "Fetched the post details", data: post[0] });
 });
 
 const createPost = asyncHandler(async (req, res) => {
