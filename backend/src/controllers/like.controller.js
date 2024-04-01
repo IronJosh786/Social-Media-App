@@ -21,10 +21,12 @@ const isDocumentLiked = asyncHandler(async (req, res) => {
   });
 
   if (!post && !comment) {
-    return res.status(404).json({ message: "Document is not liked" });
+    return res
+      .status(200)
+      .json({ message: "Document is not liked", data: false });
   }
 
-  return res.status(200).json({ message: "Document is liked" });
+  return res.status(200).json({ message: "Document is liked", data: true });
 });
 
 const togglePostLike = asyncHandler(async (req, res) => {
