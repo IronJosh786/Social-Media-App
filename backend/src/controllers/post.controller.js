@@ -10,7 +10,13 @@ const captionData = z
   .max(200, { message: "Maximum of 200 characters are allowed" });
 
 const getAllPost = asyncHandler(async (req, res) => {
-  const allPosts = await Post.find();
+  const allPosts = await Post.aggregate([
+    {
+      $project: {
+        _id: 1,
+      },
+    },
+  ]);
 
   return res.status(200).json({ message: "Fetched all posts", data: allPosts });
 });
@@ -63,12 +69,34 @@ const getPostById = asyncHandler(async (req, res) => {
       },
     },
     {
+      $addFields: {
+        totalLikeCount: {
+          $size: "$likedByDetails",
+        },
+      },
+    },
+    {
       $lookup: {
         from: "comments",
         localField: "_id",
         foreignField: "post",
         as: "commentsOnPost",
         pipeline: [
+          {
+            $lookup: {
+              from: "likes",
+              localField: "_id",
+              foreignField: "comment",
+              as: "commentsLike",
+            },
+          },
+          {
+            $addFields: {
+              totalLikesOnComment: {
+                $size: "$commentsLike",
+              },
+            },
+          },
           {
             $lookup: {
               from: "users",
@@ -86,14 +114,18 @@ const getPostById = asyncHandler(async (req, res) => {
               ],
             },
           },
+          {
+            $project: {
+              commentsLike: 0,
+            },
+          },
         ],
       },
     },
     {
-      $addFields: {
-        commentedByDetails: {
-          $first: "$commentsOnPost.commentedBy",
-        },
+      $project: {
+        likesOnPost: 0,
+        likedByDetails: 0,
       },
     },
   ]);
