@@ -16,7 +16,7 @@ const connectionSchema = new mongoose.Schema(
       default: "pending",
     },
   },
-  { timestamps }
+  { timestamps: true }
 );
 
 export const Connection = mongoose.model("Connection", connectionSchema);
