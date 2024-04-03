@@ -1,7 +1,11 @@
 import mongoose, { isValidObjectId } from "mongoose";
+import { Connection } from "../models/connection.model.js";
 import { Post } from "../models/post.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import {
+  uploadOnCloudinary,
+  deleteImagesFromCloudinary,
+} from "../utils/cloudinary.js";
 import { z } from "zod";
 
 const captionData = z
@@ -10,15 +14,95 @@ const captionData = z
   .max(200, { message: "Maximum of 200 characters are allowed" });
 
 const getAllPost = asyncHandler(async (req, res) => {
+  let { page = 1, limit = 10 } = req.query;
+
+  page = parseInt(page);
+  limit = parseInt(limit);
+
+  if (page < 1) {
+    page = 1;
+  }
+  if (limit < 1) {
+    limit = 10;
+  }
+
+  const start = (page - 1) * limit;
+
   const allPosts = await Post.aggregate([
     {
       $project: {
         _id: 1,
+        postedBy: 1,
+        updatedAt: 1,
       },
+    },
+    {
+      $sort: {
+        updatedAt: -1,
+      },
+    },
+    {
+      $skip: start,
+    },
+    {
+      $limit: limit,
     },
   ]);
 
   return res.status(200).json({ message: "Fetched all posts", data: allPosts });
+});
+
+const getPostsOfFollowing = asyncHandler(async (req, res) => {
+  let { page = 1, limit = 10 } = req.query;
+
+  page = parseInt(page);
+  limit = parseInt(limit);
+
+  if (page < 1) {
+    page = 1;
+  }
+  if (limit < 1) {
+    limit = 10;
+  }
+
+  const start = (page - 1) * limit;
+
+  const followings = await Connection.find({
+    from: req.user?._id,
+    status: "accepted",
+  });
+
+  const followingsId = followings.map((connection) => connection.to);
+
+  const allPosts = await Post.aggregate([
+    {
+      $match: {
+        postedBy: { $in: followingsId },
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        postedBy: 1,
+        updatedAt: 1,
+      },
+    },
+    {
+      $sort: {
+        updatedAt: -1,
+      },
+    },
+    {
+      $skip: start,
+    },
+    {
+      $limit: limit,
+    },
+  ]);
+
+  return res
+    .status(200)
+    .json({ message: "Fetched followings post", data: allPosts });
 });
 
 const getPostById = asyncHandler(async (req, res) => {
@@ -159,8 +243,9 @@ const createPost = asyncHandler(async (req, res) => {
 
     return res.status(201).json({ message: "Post created", data: newPost });
   } catch (error) {
-    console.error("Error creating post:", error);
-    return res.status(500).json({ message: "Could not create the post" });
+    return res
+      .status(500)
+      .json({ message: "Could not create the post", error });
   }
 });
 
@@ -201,6 +286,17 @@ const deletePost = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: "Invalid post id" });
   }
 
+  const post = await Post.findById(postId);
+  if (!post) {
+    return res.status(404).json({ message: "Post not found" });
+  }
+
+  if (!post.postedBy.equals(req.user?._id)) {
+    return res.status(400).json({ message: "Only owner can delete the post" });
+  }
+
+  const imageArray = post.images;
+
   const deletedPost = await Post.findByIdAndDelete(
     new mongoose.Types.ObjectId(postId)
   );
@@ -208,6 +304,12 @@ const deletePost = asyncHandler(async (req, res) => {
   if (!deletedPost) {
     return res.status(404).json({ message: "Post not found" });
   }
+
+  const deleteImagePromises = imageArray.map((imageUrl) => {
+    const parts = imageUrl.split("/");
+    const publicId = parts[parts.length - 1].split(".")[0];
+    deleteImagesFromCloudinary(publicId);
+  });
 
   return res.status(200).json({ message: "Deleted post", data: deletedPost });
 });
@@ -242,4 +344,5 @@ export {
   editPost,
   deletePost,
   togglePublishedStatus,
+  getPostsOfFollowing,
 };
