@@ -269,6 +269,14 @@ const editPost = asyncHandler(async (req, res) => {
     return res.status(404).json({ message: "Post not found" });
   }
 
+  if (!req.user?.isAdmin) {
+    if (!post.postedBy.equals(req.user?._id)) {
+      return res
+        .status(400)
+        .json({ message: "Only owner/admin can edit the post" });
+    }
+  }
+
   post.caption = caption;
   post.save({ validateBeforeSave: false });
 
@@ -291,8 +299,12 @@ const deletePost = asyncHandler(async (req, res) => {
     return res.status(404).json({ message: "Post not found" });
   }
 
-  if (!post.postedBy.equals(req.user?._id)) {
-    return res.status(400).json({ message: "Only owner can delete the post" });
+  if (!req.user?.isAdmin) {
+    if (!post.postedBy.equals(req.user?._id)) {
+      return res
+        .status(400)
+        .json({ message: "Only owner/admin can delete the post" });
+    }
   }
 
   const imageArray = post.images;
