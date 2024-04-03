@@ -201,6 +201,30 @@ const getPendingRequests = asyncHandler(async (req, res) => {
     .json({ message: "Fetched pending requests", data: pendingRequests });
 });
 
+const isFollowing = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  if (!isValidObjectId(userId)) {
+    return res.status(400).json({ message: "Invalid user id" });
+  }
+
+  const user = await User.findById(userId);
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  const followingStatus = await Connection.findOne({
+    from: req.user?._id,
+    to: userId,
+    status: "accepted",
+  });
+
+  if (!followingStatus) {
+    return res.status(200).json({ message: "Not following", data: false });
+  }
+
+  return res.status(200).json({ message: "Following", data: true });
+});
+
 export {
   sendRequest,
   acceptRequest,
@@ -208,4 +232,5 @@ export {
   getFollowers,
   getFollowing,
   getPendingRequests,
+  isFollowing,
 };

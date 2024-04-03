@@ -6,6 +6,7 @@ import {
   getFollowers,
   getFollowing,
   getPendingRequests,
+  isFollowing,
   sendRequest,
 } from "../controllers/connection.controller.js";
 
@@ -17,5 +18,6 @@ router.route("/decline-request/:requestId").delete(verifyJWT, declineRequest);
 router.route("/get-followers").get(verifyJWT, getFollowers);
 router.route("/get-following").get(verifyJWT, getFollowing);
 router.route("/get-pending-requests").get(verifyJWT, getPendingRequests);
+router.route("/get-is-following/:userId").get(verifyJWT, isFollowing);
 
 export default router;
