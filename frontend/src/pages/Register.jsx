@@ -2,6 +2,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { base } from "../baseUrl.js";
 
 function Register() {
   const [data, setData] = useState({
@@ -20,12 +21,16 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const userDetails = {
+      fullName: data.fullName,
       email: data.email,
       username: data.username,
       password: data.password,
     };
     try {
-      const response = await axios.post(`${base}/users/signup`, userDetails);
+      const response = await axios.post(
+        `${base}/api/v1/users/register`,
+        userDetails
+      );
       toast.success(response.data.message);
       navigate("/login");
     } catch (error) {

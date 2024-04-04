@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
 import { toggleLoggedIn } from "../features/userSlice.js";
+import { base } from "../baseUrl.js";
 
 function Login() {
   const [data, setData] = useState({
@@ -27,10 +28,13 @@ function Login() {
       password: data.password,
     };
     try {
-      const response = await axios.post(`${base}/users/login`, userDetails);
+      const response = await axios.post(
+        `${base}/api/v1/users/login`,
+        userDetails
+      );
       toast.success(response.data.message);
       dispatch(toggleLoggedIn(true));
-      Cookies.set("aToken", response.data.data.accessToken, {
+      Cookies.set("access_token", response.data.data.accessToken, {
         expires: 1,
         path: "",
       });
