@@ -25,9 +25,9 @@ function App() {
           <Route path="/" element={<Home />}>
             <Route path="/" element={<Posts />} />
             <Route path="/explore" element={<Explore />} />
-          </Route>
-          <Route element={<Auth />}>
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/" element={<Auth />}>
+              <Route path="/profile" element={<Profile />} />
+            </Route>
           </Route>
         </Routes>
         <Footer />
