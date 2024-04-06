@@ -1,4 +1,6 @@
 import { User } from "../models/user.model.js";
+import { Post } from "../models/post.model.js";
+import { Connection } from "../models/connection.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { z } from "zod";
@@ -73,7 +75,10 @@ const editData = z.object({
       }
     )
     .optional(),
-  bio: z.string().optional(),
+  bio: z
+    .string()
+    .max(300, { message: "Less than 300 characters allowed" })
+    .optional(),
 });
 
 const generateAccessAndRefreshToken = async (id) => {
@@ -290,6 +295,56 @@ const editCoverImage = asyncHandler(async (req, res) => {
     .json({ message: "Cover Image updated", data: updatedUser });
 });
 
+const getUserProfile = asyncHandler(async (req, res) => {
+  const id = req.user?._id;
+  const posts = await Post.aggregate([
+    {
+      $match: {
+        postedBy: id,
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        images: 1,
+        updatedAt: 1,
+      },
+    },
+    {
+      $sort: {
+        updatedAt: -1,
+      },
+    },
+  ]);
+
+  const followings = await Connection.find({
+    from: req.user?._id,
+    status: "accepted",
+  });
+
+  const followers = await Connection.find({
+    to: req.user?._id,
+    status: "accepted",
+  });
+
+  const { fullName, email, username, bio, coverImage, avatar } = req.user;
+
+  return res.status(200).json({
+    message: "Fetched user profile",
+    data: {
+      fullName,
+      email,
+      username,
+      bio,
+      coverImage,
+      avatar,
+      posts,
+      followers,
+      followings,
+    },
+  });
+});
+
 export {
   registerUser,
   loginUser,
@@ -297,4 +352,5 @@ export {
   editProfile,
   editAvatar,
   editCoverImage,
+  getUserProfile,
 };

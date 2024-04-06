@@ -8,6 +8,7 @@ import {
   editProfile,
   editAvatar,
   editCoverImage,
+  getUserProfile,
 } from "../controllers/user.controller.js";
 
 const router = Router();
@@ -27,5 +28,6 @@ router
     handleUploadError,
     editCoverImage
   );
+router.route("/get-user-profile").get(verifyJWT, getUserProfile);
 
 export default router;
