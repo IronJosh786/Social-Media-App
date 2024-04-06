@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleTheme } from "../features/themeSlice.js";
@@ -7,16 +7,18 @@ import axios from "axios";
 import { base } from "../baseUrl.js";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
-import { toggleLoggedIn } from "../features/userSlice.js";
+import { setUserData, toggleLoggedIn } from "../features/userSlice.js";
 
 function Navbar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const { darkMode } = useSelector((state) => state.theme);
-
+  const { userData } = useSelector((state) => state.user);
+  const { isLoggedIn } = useSelector((state) => state.user);
   const isLoginPage = location.pathname.includes("/login");
   const isRegisterPage = location.pathname.includes("/register");
+  const [profilePicture, setProfilePicture] = useState(null);
 
   const changeTheme = () => {
     dispatch(toggleTheme());
@@ -39,12 +41,31 @@ function Navbar() {
       toast.success(response.data.message);
       navigate("/login");
       Cookies.remove("access_token");
+      dispatch(setUserData(null));
       dispatch(toggleLoggedIn(false));
     } catch (error) {
       console.log(error);
       toast.error(error.response.data.message);
     }
   };
+
+  const fetching = async () => {
+    try {
+      const response = await axios.get(
+        `${base}/api/v1/users/get-user-profile`,
+        { withCredentials: true }
+      );
+      setProfilePicture(response.data.data.avatar);
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetching();
+    }
+  }, [userData]);
 
   return (
     <div className="navbar bg-base-100 ">
@@ -124,10 +145,13 @@ function Navbar() {
             role="button"
             className="btn btn-ghost btn-circle avatar"
           >
-            <div className="w-10 rounded-full">
+            <div className="w-10 rounded-full bg-accent">
               <img
-                alt="Tailwind CSS Navbar component"
-                src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+                alt="profile picture"
+                src={
+                  profilePicture ||
+                  "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+                }
               />
             </div>
           </div>
@@ -135,10 +159,10 @@ function Navbar() {
             tabIndex={0}
             className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-28 sm:w-40 items-center"
           >
-            <li className="w-full flex md:hidden">
+            <li className="w-full flex lg:hidden">
               <a className="flex justify-center">Profile</a>
             </li>
-            <li className="w-full flex md:hidden">
+            <li className="w-full flex lg:hidden">
               <a className="flex justify-center">Bookmarks</a>
             </li>
             <li onClick={logout} className="w-full">

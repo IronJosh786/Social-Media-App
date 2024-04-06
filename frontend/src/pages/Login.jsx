@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
-import { toggleLoggedIn } from "../features/userSlice.js";
+import { toggleLoggedIn, setUserData } from "../features/userSlice.js";
 import { base } from "../baseUrl.js";
 
 function Login() {
@@ -38,7 +38,8 @@ function Login() {
         expires: 1,
         path: "",
       });
-      navigate("/");
+      dispatch(setUserData(response.data.data.avatar));
+      navigate("/profile");
     } catch (error) {
       toast.error(error.response.data.message);
     }

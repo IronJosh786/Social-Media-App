@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 
-function SingleProfileCard() {
+function SingleProfileCard({ post }) {
   const { darkMode } = useSelector((state) => state.theme);
 
   const getBackgroundImageStyle = () => {
@@ -14,58 +14,23 @@ function SingleProfileCard() {
   };
   return (
     <div
+      key={post._id}
       style={getBackgroundImageStyle()}
       className="border border-base-300 max-w-full max-h-[300px] sm:max-h-[450px] carousel rounded-box"
     >
-      <div className="carousel-item w-full">
-        <img
-          src="https://images.unsplash.com/photo-1712243754269-35369d9ef28a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwzfHx8ZW58MHx8fHx8"
-          className="w-full object-contain"
-          alt="Tailwind CSS Carousel component"
-        />
-      </div>
-      <div className="carousel-item w-full">
-        <img
-          src="https://images.unsplash.com/photo-1452421822248-d4c2b47f0c81?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          className="w-full object-contain"
-          alt="Tailwind CSS Carousel component"
-        />
-      </div>
-      <div className="carousel-item w-full">
-        <img
-          src="https://images.unsplash.com/photo-1513151233558-d860c5398176?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8M2QlMjB3YWxscGFwZXJ8ZW58MHwwfDB8fHww"
-          className="w-full object-contain"
-          alt="Tailwind CSS Carousel component"
-        />
-      </div>
-      <div className="carousel-item w-full">
-        <img
-          src="https://daisyui.com/images/stock/photo-1494253109108-2e30c049369b.jpg"
-          className="w-full object-contain"
-          alt="Tailwind CSS Carousel component"
-        />
-      </div>
-      <div className="carousel-item w-full">
-        <img
-          src="https://daisyui.com/images/stock/photo-1550258987-190a2d41a8ba.jpg"
-          className="w-full object-contain"
-          alt="Tailwind CSS Carousel component"
-        />
-      </div>
-      <div className="carousel-item w-full">
-        <img
-          src="https://daisyui.com/images/stock/photo-1559181567-c3190ca9959b.jpg"
-          className="w-full object-contain"
-          alt="Tailwind CSS Carousel component"
-        />
-      </div>
-      <div className="carousel-item w-full">
-        <img
-          src="https://daisyui.com/images/stock/photo-1601004890684-d8cbf643f5f2.jpg"
-          className="w-full object-contain"
-          alt="Tailwind CSS Carousel component"
-        />
-      </div>
+      {post.images.map((path) => {
+        const parts = path.split("/");
+        const uniqueKey = parts[parts.length - 1].split(".")[0];
+        return (
+          <div key={uniqueKey} className="carousel-item w-full">
+            <img
+              src={path}
+              className="w-full h-full object-contain"
+              alt="post image"
+            />
+          </div>
+        );
+      })}
     </div>
   );
 }

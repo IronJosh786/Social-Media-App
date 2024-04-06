@@ -6,7 +6,7 @@ function Explore() {
 
   return (
     <div
-      className={`col-span-12 md:col-span-6 border-x ${
+      className={`col-span-12 lg:col-span-6 border-x ${
         darkMode ? "border-neutral-700" : "border-base-300"
       }`}
     >
