@@ -1,8 +1,10 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 function SingleProfileCard({ post }) {
   const { darkMode } = useSelector((state) => state.theme);
+  const navigate = useNavigate();
 
   const getBackgroundImageStyle = () => {
     const strokeColor = darkMode
@@ -14,6 +16,7 @@ function SingleProfileCard({ post }) {
   };
   return (
     <div
+      onClick={() => navigate(`/detailedPost/${post._id}`)}
       key={post._id}
       style={getBackgroundImageStyle()}
       className="border border-base-300 max-w-full max-h-[300px] sm:max-h-[450px] carousel rounded-box"

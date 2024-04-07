@@ -12,6 +12,7 @@ import Home from "./pages/Home.jsx";
 import Profile from "./components/Profile.jsx";
 import Posts from "./components/Posts.jsx";
 import Explore from "./components/Explore.jsx";
+import DetailedPost from "./components/DetailedPost.jsx";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/" element={<Home />}>
             <Route path="/" element={<Posts />} />
             <Route path="/explore" element={<Explore />} />
+            <Route path="/detailedPost/:id" element={<DetailedPost />} />
             <Route path="/" element={<Auth />}>
               <Route path="/profile" element={<Profile />} />
             </Route>

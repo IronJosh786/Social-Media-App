@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  isLoggedIn: false,
+  isLoggedIn: localStorage.getItem("isLoggedIn") === "true",
   userData: {
     avatar: "",
   },
@@ -13,6 +13,7 @@ const userSlice = createSlice({
   reducers: {
     toggleLoggedIn: (state, action) => {
       state.isLoggedIn = action.payload;
+      localStorage.setItem("isLoggedIn", action.payload);
     },
     setUserData: (state, action) => {
       state.userData = action.payload;
