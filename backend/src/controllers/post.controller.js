@@ -1,4 +1,5 @@
 import mongoose, { isValidObjectId } from "mongoose";
+import { User } from "../models/user.model.js";
 import { Connection } from "../models/connection.model.js";
 import { Post } from "../models/post.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -7,6 +8,7 @@ import {
   deleteImagesFromCloudinary,
 } from "../utils/cloudinary.js";
 import { z } from "zod";
+import jwt from "jsonwebtoken";
 
 const captionData = z
   .string()
@@ -112,10 +114,53 @@ const getPostById = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: "Invalid post id" });
   }
 
+  let isOwner = false;
+  let requestorId = "";
+
+  const token =
+    req.cookies?.access_token ||
+    req.headers?.authorization?.split(" ")[1] ||
+    "";
+  if (token) {
+    const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const user = await User.findById(decodedToken._id).select(
+      "-refreshToken -password"
+    );
+
+    if (user) {
+      requestorId = user._id;
+    }
+  }
+
+  const isPresent = await Post.findById(postId);
+  if (!isPresent) {
+    return res.status(404).json("Post not found");
+  }
+
+  if (isPresent.postedBy.equals(requestorId)) {
+    isOwner = true;
+  }
+
   const post = await Post.aggregate([
     {
       $match: {
         _id: new mongoose.Types.ObjectId(postId),
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "postedBy",
+        foreignField: "_id",
+        as: "ownerDetails",
+        pipeline: [
+          {
+            $project: {
+              username: 1,
+              avatar: 1,
+            },
+          },
+        ],
       },
     },
     {
@@ -210,9 +255,10 @@ const getPostById = asyncHandler(async (req, res) => {
     return res.status(404).json({ message: "Post not found" });
   }
 
-  return res
-    .status(200)
-    .json({ message: "Fetched the post details", data: post[0] });
+  return res.status(200).json({
+    message: "Fetched the post details",
+    data: { ...post[0], isOwner },
+  });
 });
 
 const createPost = asyncHandler(async (req, res) => {
