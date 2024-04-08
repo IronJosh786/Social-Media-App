@@ -2,12 +2,33 @@ import mongoose, { isValidObjectId } from "mongoose";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { Comment } from "../models/comment.model.js";
 import { Post } from "../models/post.model.js";
+import { Like } from "../models/like.model.js";
 import { z } from "zod";
 
 const commentData = z
   .string()
   .min(4, { message: "Minimum of 4 characters are required" })
-  .max(50, { message: "Maximum of 50 characters are allowed" });
+  .max(100, { message: "Maximum of 100 characters are allowed" });
+
+const getCommentLikeCount = asyncHandler(async (req, res) => {
+  const { commentId } = req.params;
+  if (!isValidObjectId(commentId)) {
+    return res.status(400).json({ message: "Invalid comment id" });
+  }
+
+  const comment = await Comment.findById(commentId);
+  if (!comment) {
+    return res.status(404).json({ message: "Comment not found" });
+  }
+
+  const likes = await Like.find({
+    comment: commentId,
+  });
+
+  return res
+    .status(200)
+    .json({ message: "Fetched like count", data: likes.length });
+});
 
 const addComment = asyncHandler(async (req, res) => {
   const { postId } = req.params;
@@ -87,4 +108,4 @@ const deleteComment = asyncHandler(async (req, res) => {
     .json({ message: "Deleted the comment", data: deletedComment });
 });
 
-export { addComment, editComment, deleteComment };
+export { addComment, editComment, deleteComment, getCommentLikeCount };
