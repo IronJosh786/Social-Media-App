@@ -5,12 +5,15 @@ import { base } from "../baseUrl.js";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import "../App.css";
+import SingleComment from "./SingleComment.jsx";
 
 function DetailedPost() {
   const { id } = useParams();
   const { darkMode } = useSelector((state) => state.theme);
   const { isLoggedIn } = useSelector((state) => state.user);
 
+  const [editMode, setEditMode] = useState(false);
+  const [postCaption, setPostCaption] = useState("");
   const [post, setPost] = useState({
     images: [],
     caption: "",
@@ -22,6 +25,12 @@ function DetailedPost() {
   });
 
   const [isLiked, setIsLiked] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [newComment, setNewComment] = useState("");
+
+  const handleCommentContentChange = (e) => {
+    setNewComment(e.target.value);
+  };
 
   const fetchPostDetails = async (id) => {
     try {
@@ -44,7 +53,11 @@ function DetailedPost() {
           const res = await axios.get(
             `${base}/api/v1/like/is-document-liked/${id}`
           );
+          const res2 = await axios.get(
+            `${base}/api/v1/bookmark/is-bookmarked/${id}`
+          );
           setIsLiked(res.data.data);
+          setIsBookmarked(res2.data.data);
         } catch (error) {
           toast.error(error.response.data.message);
         }
@@ -57,6 +70,23 @@ function DetailedPost() {
   useEffect(() => {
     fetchPostDetails(id);
   }, []);
+
+  const addNewComment = async () => {
+    if (!newComment) {
+      toast.error("Cannot post empty comment");
+      return;
+    }
+    try {
+      const response = await axios.post(
+        `${base}/api/v1/comment/add-comment/${id}`,
+        { content: newComment }
+      );
+      fetchPostDetails(id);
+      setNewComment("");
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
 
   const toggleLike = async (id) => {
     if (!isLoggedIn) {
@@ -73,53 +103,269 @@ function DetailedPost() {
     }
   };
 
+  const getBackgroundImageStyle = () => {
+    const strokeColor = darkMode
+      ? "rgb(255 255 255 / 0.2)"
+      : "rgb(0 0 0 / 0.2)";
+    return {
+      backgroundImage: `url('data:image/svg+xml,%3csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22 width=%228%22 height=%228%22 fill=%22none%22 stroke=%22${strokeColor}%22%3e%3cpath d=%22M0%20.5H31.5V32%22/%3e%3c/svg%3e')`,
+    };
+  };
+
+  const toggleBookmark = async (id) => {
+    if (!isLoggedIn) {
+      toast.error("Login Required");
+      return;
+    }
+    try {
+      const response = await axios.post(
+        `${base}/api/v1/bookmark/toggle-bookmark/${id}`
+      );
+      await fetchPostDetails(id);
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
+
+  const handleEdit = () => {
+    setEditMode(true);
+    setPostCaption(post.caption);
+  };
+
+  const handleCaptionChange = (e) => {
+    setPostCaption(e.target.value);
+    console.log(postCaption);
+  };
+
+  const handleCaptionUpdate = async () => {
+    if (!postCaption) {
+      toast.error("Cannot post empty caption");
+    }
+    try {
+      const response = await axios.patch(
+        `${base}/api/v1/post/edit-post/${id}`,
+        {
+          caption: postCaption,
+        }
+      );
+      setEditMode(false);
+      fetchPostDetails(id);
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
+
   return (
     <div
-      className={`col-span-12 lg:col-span-6 border-x border-b pb-4 ${
+      className={`col-span-12 lg:col-span-6 border-x border-b p-4 ${
         darkMode ? "border-neutral-700" : "border-base-300"
       }`}
     >
       <div className="flex flex-col gap-4">
-        <div className="flex gap-4 items-center">
-          <div>
-            <img
-              className="h-10 w-10 rounded-full"
-              src={post.avatar}
-              alt="avatar"
-            />
+        <div className="flex items-center justify-between">
+          <div className="flex gap-4 items-center">
+            <div>
+              <img
+                className="h-10 w-10 rounded-full"
+                src={post.avatar}
+                alt="avatar"
+              />
+            </div>
+            <div>{post.username}</div>
           </div>
-          <div>{post.username}</div>
+          {post.isOwner && (
+            <div className="dropdown dropdown-end">
+              <div tabIndex={0} role="button" className="btn m-1">
+                <i className="ri-more-2-line"></i>
+              </div>
+              <ul
+                tabIndex={0}
+                className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-28 sm:w-40"
+              >
+                <li onClick={handleEdit} className="w-full">
+                  <a className="flex justify-center">Edit</a>
+                </li>
+                <li onClick={handleEdit} className="w-full">
+                  <a className="flex justify-center">Delete</a>
+                </li>
+              </ul>
+            </div>
+          )}
         </div>
-        {post.images.map((image, index) => (
-          <div key={index}>
-            <img className="h-20 w-20" src={image} alt="image" />
-          </div>
-        ))}
-        <p>{post.caption}</p>
-        <p>{post.totalLikeCount}</p>
-        {post.commentsOnPost.map((comment, index) => (
-          <div key={index}>
-            <p>{comment.content}</p>
-          </div>
-        ))}
-        {post.isOwner && <p>Owner</p>}
-        <button
-          onClick={() => {
-            toggleLike(id);
-          }}
-          className="h-8 w-8 active:scale-90 transition duration-200"
+        <div
+          style={getBackgroundImageStyle()}
+          className="border border-base-300 max-w-full max-h-[300px] sm:max-h-[450px] carousel rounded-box"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
+          {post.images.map((path) => {
+            const parts = path.split("/");
+            const uniqueKey = parts[parts.length - 1].split(".")[0];
+            return (
+              <div key={uniqueKey} className="carousel-item w-full">
+                <img
+                  src={path}
+                  className="w-full h-full object-contain"
+                  alt="post image"
+                />
+              </div>
+            );
+          })}
+        </div>
+        <div className="flex justify-between items-center">
+          <div
+            className={`flex gap-4 items-center ${
+              isLiked ? "block" : "hidden"
+            }`}
           >
-            <path
-              fill={isLiked ? "red" : "currentColor"}
-              d="M12.001 4.52853C14.35 2.42 17.98 2.49 20.2426 4.75736C22.5053 7.02472 22.583 10.637 20.4786 12.993L11.9999 21.485L3.52138 12.993C1.41705 10.637 1.49571 7.01901 3.75736 4.75736C6.02157 2.49315 9.64519 2.41687 12.001 4.52853Z"
-            ></path>
-          </svg>
-        </button>
+            <button
+              onClick={() => {
+                toggleLike(id);
+              }}
+              className="h-6 w-6 active:scale-90 transition all ease-in-out duration-200"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  fill="red"
+                  d="M12.001 4.52853C14.35 2.42 17.98 2.49 20.2426 4.75736C22.5053 7.02472 22.583 10.637 20.4786 12.993L11.9999 21.485L3.52138 12.993C1.41705 10.637 1.49571 7.01901 3.75736 4.75736C6.02157 2.49315 9.64519 2.41687 12.001 4.52853Z"
+                ></path>
+              </svg>
+            </button>{" "}
+            <span className="font-bold">
+              {post.totalLikeCount}
+              <span className="font-normal"> Likes</span>
+            </span>
+          </div>
+          <div
+            className={`flex gap-4 items-center ${
+              isLiked ? "hidden" : "block"
+            }`}
+          >
+            <button
+              onClick={() => {
+                toggleLike(id);
+              }}
+              className="h-6 w-6 active:scale-90 transition all ease-in-out duration-200"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className={`${
+                  isLiked ? "hidden" : "block"
+                } hover:fill-red-600 transition all ease-in-out duration-150`}
+              >
+                <path d="M12.001 4.52853C14.35 2.42 17.98 2.49 20.2426 4.75736C22.5053 7.02472 22.583 10.637 20.4786 12.993L11.9999 21.485L3.52138 12.993C1.41705 10.637 1.49571 7.01901 3.75736 4.75736C6.02157 2.49315 9.64519 2.41687 12.001 4.52853ZM18.827 6.1701C17.3279 4.66794 14.9076 4.60701 13.337 6.01687L12.0019 7.21524L10.6661 6.01781C9.09098 4.60597 6.67506 4.66808 5.17157 6.17157C3.68183 7.66131 3.60704 10.0473 4.97993 11.6232L11.9999 18.6543L19.0201 11.6232C20.3935 10.0467 20.319 7.66525 18.827 6.1701Z"></path>
+              </svg>
+            </button>{" "}
+            <span className="font-bold">
+              {post.totalLikeCount}
+              <span className="font-normal"> Likes</span>
+            </span>
+          </div>
+          <div
+            className={`flex gap-4 items-center ${
+              isBookmarked ? "block" : "hidden"
+            }`}
+          >
+            <button
+              onClick={() => {
+                toggleBookmark(id);
+              }}
+              className="h-6 w-6 active:scale-90 transition all ease-in-out duration-200"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  fill="#3b82f6"
+                  d="M5 2H19C19.5523 2 20 2.44772 20 3V22.1433C20 22.4194 19.7761 22.6434 19.5 22.6434C19.4061 22.6434 19.314 22.6168 19.2344 22.5669L12 18.0313L4.76559 22.5669C4.53163 22.7136 4.22306 22.6429 4.07637 22.4089C4.02647 22.3293 4 22.2373 4 22.1433V3C4 2.44772 4.44772 2 5 2Z"
+                ></path>
+              </svg>
+            </button>
+          </div>
+          <div
+            className={`flex gap-4 items-center ${
+              isBookmarked ? "hidden" : "block"
+            }`}
+          >
+            <button
+              onClick={() => {
+                toggleBookmark(id);
+              }}
+              className="h-6 w-6 active:scale-90 transition all ease-in-out duration-200"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="hover:fill-blue-600 transition all ease-in-out duration-150"
+              >
+                <path d="M5 2H19C19.5523 2 20 2.44772 20 3V22.1433C20 22.4194 19.7761 22.6434 19.5 22.6434C19.4061 22.6434 19.314 22.6168 19.2344 22.5669L12 18.0313L4.76559 22.5669C4.53163 22.7136 4.22306 22.6429 4.07637 22.4089C4.02647 22.3293 4 22.2373 4 22.1433V3C4 2.44772 4.44772 2 5 2ZM18 4H6V19.4324L12 15.6707L18 19.4324V4Z"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div>
+          <span className="font-bold underline underline-offset-2">
+            {post.username}
+          </span>{" "}
+          <div className="relative">
+            <div
+              contentEditable={editMode}
+              onChange={(e) => handleCaptionChange(e)}
+              className={`mt-2 py-4 ${
+                editMode ? "border px-2" : "border-0 px-0"
+              } ${darkMode ? "border-neutral-700" : "border-base-300"}`}
+            >
+              {post.caption}
+            </div>
+            <div
+              onClick={handleCaptionUpdate}
+              className={`${
+                editMode ? "block" : "hidden"
+              } flex justify-center items-center absolute right-2 bottom-2 btn btn-outline text-[0.625rem] md:text-xs p-1 h-8 min-h-4`}
+            >
+              Edit
+            </div>
+          </div>
+        </div>
+        <div
+          className={`p-2 border ${
+            darkMode ? "border-neutral-700" : "border-base-300"
+          }`}
+        >
+          <span className="font-bold">Comments</span>
+          <div className="mt-2">
+            {isLoggedIn && (
+              <div className="mb-2 relative">
+                <textarea
+                  placeholder="Add Comment..."
+                  value={newComment}
+                  onChange={(e) => {
+                    handleCommentContentChange(e);
+                  }}
+                  className={`textarea textarea-ghost textarea-md w-full resize-none ${
+                    darkMode ? "border-neutral-700" : "border-base-300"
+                  }`}
+                ></textarea>
+                <div
+                  onClick={addNewComment}
+                  className="absolute right-4 bottom-4 btn btn-outline text-[0.625rem] md:text-xs h-8 min-h-4"
+                >
+                  Add
+                </div>
+              </div>
+            )}
+            {post.commentsOnPost.map((comment) => (
+              <SingleComment key={comment._id} comment={comment} />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
