@@ -3,6 +3,8 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { Comment } from "../models/comment.model.js";
 import { Post } from "../models/post.model.js";
 import { Like } from "../models/like.model.js";
+import { User } from "../models/user.model.js";
+import jwt from "jsonwebtoken";
 import { z } from "zod";
 
 const commentData = z
@@ -21,13 +23,40 @@ const getCommentLikeCount = asyncHandler(async (req, res) => {
     return res.status(404).json({ message: "Comment not found" });
   }
 
+  let isOwner = false;
+  let requestorId = "";
+
+  const token =
+    req.cookies?.access_token ||
+    req.headers?.authorization?.split(" ")[1] ||
+    "";
+  if (token) {
+    const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const user = await User.findById(decodedToken._id).select(
+      "-refreshToken -password"
+    );
+
+    if (user) {
+      requestorId = user._id;
+    }
+  }
+
+  if (comment.commentedBy.equals(requestorId)) {
+    isOwner = true;
+  }
+
   const likes = await Like.find({
     comment: commentId,
   });
 
-  return res
-    .status(200)
-    .json({ message: "Fetched like count", data: likes.length });
+  return res.status(200).json({
+    message: "Fetched like count",
+    data: {
+      commentDetails: comment,
+      likeCount: likes.length,
+      isOwner: isOwner,
+    },
+  });
 });
 
 const addComment = asyncHandler(async (req, res) => {
@@ -81,6 +110,12 @@ const editComment = asyncHandler(async (req, res) => {
     return res.status(404).json({ message: "Comment not found" });
   }
 
+  if (!comment.commentedBy.equals(req.user?._id)) {
+    return res
+      .status(400)
+      .json({ message: "Only owner can update the comment" });
+  }
+
   comment.content = content;
   await comment.save({ validateBeforeSave: false });
 
@@ -95,6 +130,17 @@ const deleteComment = asyncHandler(async (req, res) => {
   const { commentId } = req.params;
   if (!isValidObjectId(commentId)) {
     return res.status(400).json({ message: "Invalid comment id" });
+  }
+
+  const comment = await Comment.findById(commentId);
+  if (!comment) {
+    return res.status(404).json({ message: "Comment not found" });
+  }
+
+  if (!comment.commentedBy.equals(req.user?._id)) {
+    return res
+      .status(400)
+      .json({ message: "Only owner can delete the comment" });
   }
 
   const deletedComment = await Comment.findByIdAndDelete(commentId);
