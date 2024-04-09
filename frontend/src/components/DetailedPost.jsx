@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import { base } from "../baseUrl.js";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import "../App.css";
 import SingleComment from "./SingleComment.jsx";
@@ -12,8 +12,10 @@ function DetailedPost() {
   const { darkMode } = useSelector((state) => state.theme);
   const { isLoggedIn } = useSelector((state) => state.user);
 
-  const [editMode, setEditMode] = useState(false);
   const [postCaption, setPostCaption] = useState("");
+  const [isLiked, setIsLiked] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [newComment, setNewComment] = useState("");
   const [post, setPost] = useState({
     images: [],
     caption: "",
@@ -24,13 +26,7 @@ function DetailedPost() {
     isOwner: false,
   });
 
-  const [isLiked, setIsLiked] = useState(false);
-  const [isBookmarked, setIsBookmarked] = useState(false);
-  const [newComment, setNewComment] = useState("");
-
-  const handleCommentContentChange = (e) => {
-    setNewComment(e.target.value);
-  };
+  const navigate = useNavigate();
 
   const fetchPostDetails = async (id) => {
     try {
@@ -47,7 +43,7 @@ function DetailedPost() {
         username,
         isOwner,
       });
-
+      setPostCaption(response.data.data.caption);
       if (isLoggedIn) {
         try {
           const res = await axios.get(
@@ -70,6 +66,10 @@ function DetailedPost() {
   useEffect(() => {
     fetchPostDetails(id);
   }, []);
+
+  const handleCommentContentChange = (e) => {
+    setNewComment(e.target.value);
+  };
 
   const addNewComment = async () => {
     if (!newComment) {
@@ -103,15 +103,6 @@ function DetailedPost() {
     }
   };
 
-  const getBackgroundImageStyle = () => {
-    const strokeColor = darkMode
-      ? "rgb(255 255 255 / 0.2)"
-      : "rgb(0 0 0 / 0.2)";
-    return {
-      backgroundImage: `url('data:image/svg+xml,%3csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22 width=%228%22 height=%228%22 fill=%22none%22 stroke=%22${strokeColor}%22%3e%3cpath d=%22M0%20.5H31.5V32%22/%3e%3c/svg%3e')`,
-    };
-  };
-
   const toggleBookmark = async (id) => {
     if (!isLoggedIn) {
       toast.error("Login Required");
@@ -127,14 +118,8 @@ function DetailedPost() {
     }
   };
 
-  const handleEdit = () => {
-    setEditMode(true);
-    setPostCaption(post.caption);
-  };
-
   const handleCaptionChange = (e) => {
     setPostCaption(e.target.value);
-    console.log(postCaption);
   };
 
   const handleCaptionUpdate = async () => {
@@ -148,11 +133,30 @@ function DetailedPost() {
           caption: postCaption,
         }
       );
-      setEditMode(false);
       fetchPostDetails(id);
     } catch (error) {
       toast.error(error.response.data.message);
     }
+  };
+
+  const handleDeletePost = async () => {
+    try {
+      const response = await axios.delete(
+        `${base}/api/v1/post/delete-post/${id}`
+      );
+      navigate("/profile");
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
+
+  const getBackgroundImageStyle = () => {
+    const strokeColor = darkMode
+      ? "rgb(255 255 255 / 0.2)"
+      : "rgb(0 0 0 / 0.2)";
+    return {
+      backgroundImage: `url('data:image/svg+xml,%3csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22 width=%228%22 height=%228%22 fill=%22none%22 stroke=%22${strokeColor}%22%3e%3cpath d=%22M0%20.5H31.5V32%22/%3e%3c/svg%3e')`,
+    };
   };
 
   return (
@@ -161,6 +165,60 @@ function DetailedPost() {
         darkMode ? "border-neutral-700" : "border-base-300"
       }`}
     >
+      <dialog id="my_modal_3" className="modal">
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
+        <div className="modal-box">
+          <p className="p-2 md:p-4">Do you really want to delete this post?</p>
+          <form
+            method="dialog"
+            onSubmit={handleDeletePost}
+            className="card-body grid grid-cols-2 p-2 md:p-4"
+          >
+            <div className="btn hidden lg:flex">Esc to close</div>
+            <div className="btn lg:hidden">Click outside to close</div>
+            <div className="form-control">
+              <button type="submit" className="btn btn-error">
+                Delete
+              </button>
+            </div>
+          </form>
+        </div>
+      </dialog>
+      <dialog id="my_modal_4" className="modal modal-middle">
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
+        <div className="modal-box">
+          <form
+            onSubmit={handleCaptionUpdate}
+            method="dialog"
+            className="card-body grid grid-cols-2 p-2 md:p-4"
+          >
+            <div className="form-control col-span-2">
+              <label className="label">
+                <span className="label-text">Caption</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Bio"
+                className="input input-bordered"
+                id="bio"
+                value={postCaption}
+                onChange={handleCaptionChange}
+              />
+            </div>
+            <div className="mt-6 btn hidden lg:flex">Esc to close</div>
+            <div className="mt-6 btn lg:hidden">Click outside to close</div>
+            <div className="form-control mt-6">
+              <button type="submit" className="btn btn-primary">
+                Update
+              </button>
+            </div>
+          </form>
+        </div>
+      </dialog>
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <div className="flex gap-4 items-center">
@@ -182,10 +240,20 @@ function DetailedPost() {
                 tabIndex={0}
                 className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-28 sm:w-40"
               >
-                <li onClick={handleEdit} className="w-full">
+                <li
+                  onClick={() =>
+                    document.getElementById("my_modal_4").showModal()
+                  }
+                  className="w-full"
+                >
                   <a className="flex justify-center">Edit</a>
                 </li>
-                <li onClick={handleEdit} className="w-full">
+                <li
+                  onClick={() =>
+                    document.getElementById("my_modal_3").showModal()
+                  }
+                  className="w-full"
+                >
                   <a className="flex justify-center">Delete</a>
                 </li>
               </ul>
@@ -314,25 +382,13 @@ function DetailedPost() {
           <span className="font-bold underline underline-offset-2">
             {post.username}
           </span>{" "}
-          <div className="relative">
-            <div
-              contentEditable={editMode}
-              onChange={(e) => handleCaptionChange(e)}
-              className={`mt-2 py-4 ${
-                editMode ? "border px-2" : "border-0 px-0"
-              } ${darkMode ? "border-neutral-700" : "border-base-300"}`}
-            >
-              {post.caption}
-            </div>
-            <div
-              onClick={handleCaptionUpdate}
-              className={`${
-                editMode ? "block" : "hidden"
-              } flex justify-center items-center absolute right-2 bottom-2 btn btn-outline text-[0.625rem] md:text-xs p-1 h-8 min-h-4`}
-            >
-              Edit
-            </div>
-          </div>
+          <span
+            className={`mt-2 py-4 ${
+              darkMode ? "border-neutral-700" : "border-base-300"
+            }`}
+          >
+            {post.caption}
+          </span>
         </div>
         <div
           className={`p-2 border ${
@@ -361,9 +417,17 @@ function DetailedPost() {
                 </div>
               </div>
             )}
-            {post.commentsOnPost.map((comment) => (
-              <SingleComment key={comment._id} comment={comment} />
-            ))}
+            {post.commentsOnPost.map((comment) => {
+              return (
+                <SingleComment
+                  key={comment._id}
+                  comment={comment}
+                  id={comment._id}
+                  parentFetch={fetchPostDetails}
+                  postId={id}
+                />
+              );
+            })}
           </div>
         </div>
       </div>

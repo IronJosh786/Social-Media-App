@@ -4,18 +4,15 @@ import { toast } from "sonner";
 import axios from "axios";
 import { base } from "../baseUrl.js";
 
-function SingleComment({ comment }) {
+function SingleComment({ comment, id, parentFetch, postId }) {
   const { darkMode } = useSelector((state) => state.theme);
   const { isLoggedIn } = useSelector((state) => state.user);
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [content, setContent] = useState(comment.content);
   const [isLiked, setIsLiked] = useState(false);
   const [commentLikes, setCommentLikes] = useState(0);
-
-  const handleChange = (e) => {
-    setContent(e.target.innerText);
-  };
+  const [commentContent, setCommentContent] = useState(comment.content);
+  const [isOwner, setIsOwner] = useState(false);
+  const [newComment, setNewComment] = useState("");
 
   const toggleLike = async (id) => {
     try {
@@ -43,23 +40,115 @@ function SingleComment({ comment }) {
       const res = await axios.get(
         `${base}/api/v1/comment/get-comments-like/${id}`
       );
-      setCommentLikes(res.data.data);
+      setCommentContent(res.data.data.commentDetails.content);
+      setIsOwner(res.data.data.isOwner);
+      setCommentLikes(res.data.data.likeCount);
     } catch (error) {
       toast.error(error.response.data.message);
     }
   };
 
   useEffect(() => {
-    fetchData(comment._id);
+    fetchData(id);
   }, []);
+
+  const handleCommentChange = (e) => {
+    setNewComment(e.target.value);
+  };
+
+  const handleCommentUpdate = async (id) => {
+    if (!newComment) {
+      toast.error("Cannot post empty comment");
+      return;
+    }
+    try {
+      const response = await axios.patch(
+        `${base}/api/v1/comment/edit-comment/${id}`,
+        { content: newComment }
+      );
+      fetchData(comment._id);
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
+
+  const handleCommentDelete = async (id) => {
+    try {
+      const response = await axios.delete(
+        `${base}/api/v1/comment/delete-comment/${id}`
+      );
+      await parentFetch(postId);
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
 
   return (
     <div
-      key={comment._id}
       className={`p-2 border ${
         darkMode ? "border-neutral-700" : "border-base-300"
       }`}
     >
+      <dialog id={`my_modal_1_${comment._id}`} className="modal">
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
+        <div className="modal-box">
+          <p className="p-2 md:p-4">
+            Do you really want to delete this comment?
+          </p>
+          <form
+            method="dialog"
+            onSubmit={() => {
+              handleCommentDelete(id);
+            }}
+            className="card-body grid grid-cols-2 p-2 md:p-4"
+          >
+            <div className="btn hidden lg:flex">Esc to close</div>
+            <div className="btn lg:hidden">Click outside to close</div>
+            <div className="form-control">
+              <button type="submit" className="btn btn-error">
+                Delete
+              </button>
+            </div>
+          </form>
+        </div>
+      </dialog>
+      <dialog id={`my_modal_2_${comment._id}`} className="modal modal-middle">
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
+        <div className="modal-box">
+          <form
+            onSubmit={() => {
+              handleCommentUpdate(comment._id);
+            }}
+            method="dialog"
+            className="card-body grid grid-cols-2 p-2 md:p-4"
+          >
+            <div className="form-control col-span-2">
+              <label className="label">
+                <span className="label-text">Caption</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Comment"
+                className="input input-bordered"
+                id="comment"
+                value={newComment}
+                onChange={handleCommentChange}
+              />
+            </div>
+            <div className="mt-6 btn hidden lg:flex">Esc to close</div>
+            <div className="mt-6 btn lg:hidden">Click outside to close</div>
+            <div className="form-control mt-6">
+              <button type="submit" className="btn btn-primary">
+                Update
+              </button>
+            </div>
+          </form>
+        </div>
+      </dialog>
       <div className="flex gap-4">
         <div className="shrink-0">
           <img
@@ -70,13 +159,7 @@ function SingleComment({ comment }) {
         </div>
         <div className="flex flex-col w-full">
           <p className="font-bold text-sm">{comment.commentedBy[0].username}</p>
-          <div
-            contentEditable={isEditing}
-            onChange={handleChange}
-            className="py-1"
-          >
-            {content}
-          </div>
+          <div className="py-1">{commentContent}</div>
           <div
             className={`mt-2 flex gap-4 items-center ${
               isLiked ? "block" : "hidden"
@@ -131,6 +214,30 @@ function SingleComment({ comment }) {
               <span className="font-normal"> Likes</span>
             </span>
           </div>
+          {isOwner && (
+            <div className="flex gap-4 justify-end mt-2">
+              <div className="text-base">
+                <i
+                  onClick={() =>
+                    document
+                      .getElementById(`my_modal_2_${comment._id}`)
+                      .showModal()
+                  }
+                  className="ri-pencil-line hover:cursor-pointer"
+                ></i>
+              </div>
+              <div className="text-base">
+                <i
+                  onClick={() =>
+                    document
+                      .getElementById(`my_modal_1_${comment._id}`)
+                      .showModal()
+                  }
+                  className="ri-delete-bin-6-line hover:cursor-pointer"
+                ></i>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

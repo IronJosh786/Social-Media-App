@@ -159,6 +159,9 @@ function Profile() {
       }`}
     >
       <dialog id="my_modal_6" className="modal modal-middle">
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
         <div className="modal-box">
           <form
             method="dialog"
@@ -183,7 +186,8 @@ function Profile() {
               onChange={handleFileChange}
               className="hidden text-[0.625rem] file-input file-input-bordered file-input-md w-full max-w-xs"
             />
-            <div className="mt-6 btn">Esc to close</div>
+            <div className="mt-6 btn hidden lg:flex">Esc to close</div>
+            <div className="mt-6 btn lg:hidden">Click outside to close</div>
             <div className="form-control mt-6">
               <button type="submit" className="btn btn-primary">
                 Update
@@ -193,6 +197,9 @@ function Profile() {
         </div>
       </dialog>
       <dialog id="my_modal_5" className="modal modal-middle">
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
         <div className="modal-box">
           <form
             onSubmit={handleDetailSubmit}
@@ -264,7 +271,8 @@ function Profile() {
                 onChange={handleChange}
               />
             </div>
-            <div className="mt-6 btn">Esc to close</div>
+            <div className="mt-6 btn hidden lg:flex">Esc to close</div>
+            <div className="mt-6 btn lg:hidden">Click outside to close</div>
             <div className="form-control mt-6">
               <button type="submit" className="btn btn-primary">
                 Update
