@@ -47,17 +47,13 @@ function Navbar() {
       );
       dispatch(toggleLoggedIn(false));
     } catch (error) {
-      console.log(error);
       toast.error(error.response.data.message);
     }
   };
 
   const fetching = async () => {
     try {
-      const response = await axios.get(
-        `${base}/api/v1/users/get-user-profile`,
-        { withCredentials: true }
-      );
+      const response = await axios.get(`${base}/api/v1/users/get-user-profile`);
       setProfilePicture(response.data.data.avatar);
     } catch (error) {
       toast.error(error.response.data.message);

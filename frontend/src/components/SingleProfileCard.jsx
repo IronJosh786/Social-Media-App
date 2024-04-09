@@ -19,7 +19,7 @@ function SingleProfileCard({ post }) {
       onClick={() => navigate(`/detailedPost/${post._id}`)}
       key={post._id}
       style={getBackgroundImageStyle()}
-      className="border border-base-300 max-w-full max-h-[300px] sm:max-h-[450px] carousel rounded-box"
+      className="hover:cursor-pointer border border-base-300 max-w-full max-h-[300px] sm:max-h-[450px] carousel rounded-box"
     >
       {post.images.map((path) => {
         const parts = path.split("/");
