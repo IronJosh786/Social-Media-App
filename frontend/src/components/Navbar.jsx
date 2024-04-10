@@ -69,40 +69,42 @@ function Navbar() {
   return (
     <div className="navbar bg-base-100 ">
       <div className="navbar-start">
-        <div className="dropdown">
-          <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+        {!isLoginPage && !isRegisterPage && (
+          <div className="dropdown">
+            <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h8m-8 6h16"
+                />
+              </svg>
+            </div>
+            <ul
+              tabIndex={0}
+              className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h8m-8 6h16"
-              />
-            </svg>
+              <li>
+                <a>Posts</a>
+                <ul className="p-2">
+                  <li>
+                    <a>All</a>
+                  </li>
+                  <li>
+                    <a>Followings</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
           </div>
-          <ul
-            tabIndex={0}
-            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
-          >
-            <li>
-              <a>Posts</a>
-              <ul className="p-2">
-                <li>
-                  <a>All</a>
-                </li>
-                <li>
-                  <a>Followings</a>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </div>
+        )}
         <a className="btn btn-ghost text-xl hidden md:flex">SocialSphere</a>
         <a>
           <svg
@@ -138,47 +140,65 @@ function Navbar() {
         </div>
       )}
       <div className="navbar-end">
-        <div className="dropdown dropdown-end">
-          <div
-            tabIndex={0}
-            role="button"
-            className="btn btn-ghost btn-circle avatar"
-          >
-            <div className="w-10 rounded-full bg-accent">
-              <img
-                alt="profile picture"
-                src={
-                  profilePicture ||
-                  "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
-                }
-              />
-            </div>
+        {!isLoggedIn && !isLoginPage && !isRegisterPage && (
+          <div className="flex gap-4 px-4">
+            <NavLink
+              to={"/register"}
+              className={`btn btn-outline h-8 min-h-4 text-[0.7rem] p-2 sm:text-base sm:h-10 sm:min-h-10`}
+            >
+              Register
+            </NavLink>
+            <NavLink
+              to={"/login"}
+              className={`btn btn-primary h-8 min-h-4 text-[0.7rem] p-2 sm:text-base sm:h-10 sm:min-h-10`}
+            >
+              Login
+            </NavLink>
           </div>
-          <ul
-            tabIndex={0}
-            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-28 sm:w-40 items-center"
-          >
-            <li className="w-full flex lg:hidden">
-              <a className="flex justify-center">Profile</a>
-            </li>
-            <li className="w-full flex lg:hidden">
-              <a className="flex justify-center">Bookmarks</a>
-            </li>
-            <li onClick={logout} className="w-full">
-              <a className="flex justify-center">Logout</a>
-            </li>
-            <div className="divider my-0"></div>
-            <li className="w-full">
-              <div onClick={changeTheme} className="flex justify-center">
-                {darkMode ? (
-                  <i className="ri-sun-line "></i>
-                ) : (
-                  <i className="ri-moon-line "></i>
-                )}
+        )}
+        {isLoggedIn && (
+          <div className="dropdown dropdown-end">
+            <div
+              tabIndex={0}
+              role="button"
+              className="btn btn-ghost btn-circle avatar"
+            >
+              <div className="w-10 rounded-full bg-accent">
+                <img
+                  alt="profile picture"
+                  src={
+                    profilePicture ||
+                    "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+                  }
+                />
               </div>
-            </li>
-          </ul>
-        </div>
+            </div>
+            <ul
+              tabIndex={0}
+              className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-28 sm:w-40 items-center"
+            >
+              <li className="w-full flex lg:hidden">
+                <a className="flex justify-center">Profile</a>
+              </li>
+              <li className="w-full flex lg:hidden">
+                <a className="flex justify-center">Bookmarks</a>
+              </li>
+              <li onClick={logout} className="w-full">
+                <a className="flex justify-center">Logout</a>
+              </li>
+              <div className="divider my-0"></div>
+              <li className="w-full">
+                <div onClick={changeTheme} className="flex justify-center">
+                  {darkMode ? (
+                    <i className="ri-sun-line "></i>
+                  ) : (
+                    <i className="ri-moon-line "></i>
+                  )}
+                </div>
+              </li>
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );

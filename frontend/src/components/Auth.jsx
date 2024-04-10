@@ -4,7 +4,9 @@ import Cookies from "js-cookie";
 import { Outlet } from "react-router-dom";
 
 function Auth() {
-  let token = localStorage.getItem("isLoggedIn") || Cookies.get("access_token");
+  let token =
+    JSON.parse(localStorage.getItem("isLoggedIn")) ||
+    Cookies.get("access_token");
   return token ? <Outlet /> : <Login />;
 }
 
