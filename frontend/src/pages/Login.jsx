@@ -39,7 +39,7 @@ function Login() {
         path: "",
       });
       dispatch(setUserData(response.data.data.avatar));
-      navigate("/profile");
+      navigate("/");
     } catch (error) {
       toast.error(error.response.data.message);
     }

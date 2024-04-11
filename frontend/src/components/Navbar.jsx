@@ -39,7 +39,7 @@ function Navbar() {
     try {
       const response = await axios.post(`${base}/api/v1/users/logout`);
       toast.success(response.data.message);
-      navigate("/login");
+      navigate("/");
       Cookies.remove("access_token");
       dispatch(setUserData(null));
       setProfilePicture(
@@ -69,42 +69,6 @@ function Navbar() {
   return (
     <div className="navbar bg-base-100 ">
       <div className="navbar-start">
-        {!isLoginPage && !isRegisterPage && (
-          <div className="dropdown">
-            <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h8m-8 6h16"
-                />
-              </svg>
-            </div>
-            <ul
-              tabIndex={0}
-              className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
-            >
-              <li>
-                <a>Posts</a>
-                <ul className="p-2">
-                  <li>
-                    <a>All</a>
-                  </li>
-                  <li>
-                    <a>Followings</a>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </div>
-        )}
         <a className="btn btn-ghost text-xl hidden md:flex">SocialSphere</a>
         <a>
           <svg
@@ -121,24 +85,6 @@ function Navbar() {
           </svg>
         </a>
       </div>
-      {!isLoginPage && !isRegisterPage && (
-        <div className="navbar-center hidden lg:flex">
-          <div className="flex flex-col w-full">
-            <div className="grid rounded-box place-items-center">Posts</div>
-            <div className="divider my-0"></div>
-            <div className="grid rounded-box place-items-center">
-              <ul className="menu menu-horizontal p-0 mt-0 flex gap-4">
-                <li className="bg-base-300 rounded-box flex items-center justify-center">
-                  <a className="rounded-box py-1 px-8">All</a>
-                </li>
-                <li className="bg-base-300 rounded-box flex items-center justify-center">
-                  <a className="rounded-box py-1 px-8">Follwings</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      )}
       <div className="navbar-end">
         {!isLoggedIn && !isLoginPage && !isRegisterPage && (
           <div className="flex gap-4 px-4">

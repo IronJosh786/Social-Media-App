@@ -224,12 +224,12 @@ function DetailedPost() {
           <div className="flex gap-4 items-center">
             <div>
               <img
-                className="h-10 w-10 rounded-full"
+                className="h-10 w-10 rounded-full object-cover"
                 src={post.avatar}
                 alt="avatar"
               />
             </div>
-            <div>{post.username}</div>
+            <div className="font-bold">{post.username}</div>
           </div>
           {post.isOwner && (
             <div className="dropdown dropdown-end">
@@ -416,6 +416,9 @@ function DetailedPost() {
                   Add
                 </div>
               </div>
+            )}
+            {!post.commentsOnPost.length && (
+              <p className="mt-4">No Comment to show</p>
             )}
             {post.commentsOnPost.map((comment) => {
               return (
