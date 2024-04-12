@@ -9,6 +9,7 @@ import {
   editAvatar,
   editCoverImage,
   getUserProfile,
+  getAllUsers,
 } from "../controllers/user.controller.js";
 
 const router = Router();
@@ -29,5 +30,6 @@ router
     editCoverImage
   );
 router.route("/get-user-profile").get(verifyJWT, getUserProfile);
+router.route("/get-all-users").get(getAllUsers);
 
 export default router;

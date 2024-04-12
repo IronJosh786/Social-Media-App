@@ -77,7 +77,7 @@ const editData = z.object({
     .optional(),
   bio: z
     .string()
-    .max(300, { message: "Less than 300 characters allowed" })
+    .max(100, { message: "Less than 100 characters allowed" })
     .optional(),
 });
 
@@ -345,6 +345,14 @@ const getUserProfile = asyncHandler(async (req, res) => {
   });
 });
 
+const getAllUsers = asyncHandler(async (req, res) => {
+  const allUsers = await User.find()
+    .select("-password -refreshToken")
+    .sort({ createdAt: -1 });
+
+  return res.status(200).json({ message: "Fetched all users", data: allUsers });
+});
+
 export {
   registerUser,
   loginUser,
@@ -353,4 +361,5 @@ export {
   editAvatar,
   editCoverImage,
   getUserProfile,
+  getAllUsers,
 };
