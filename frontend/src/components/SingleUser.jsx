@@ -84,7 +84,7 @@ function SingleUser({ user }) {
         />
       </div>
       <p className="uppercase mt-4">{user.fullName}</p>
-      <p className="font-semibold">@{user.username}</p>
+      <p className="font-semibold mt-2">@{user.username}</p>
       <p className="mt-4">{user.bio}</p>
       <div className="flex gap-4 mt-8">
         <button

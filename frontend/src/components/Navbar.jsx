@@ -124,10 +124,14 @@ function Navbar() {
               className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-28 sm:w-40 items-center"
             >
               <li className="w-full flex lg:hidden">
-                <a className="flex justify-center">Profile</a>
+                <NavLink to={"/profile"} className="flex justify-center">
+                  Profile
+                </NavLink>
               </li>
               <li className="w-full flex lg:hidden">
-                <a className="flex justify-center">Bookmarks</a>
+                <NavLink to={"/bookmarks"} className="flex justify-center">
+                  Bookmarks
+                </NavLink>
               </li>
               <li onClick={logout} className="w-full">
                 <a className="flex justify-center">Logout</a>

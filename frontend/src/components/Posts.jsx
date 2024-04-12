@@ -30,10 +30,6 @@ function Posts() {
       const response = await axios.get(
         `${base}/api/v1/post/get-followings-post?page=${page}&limit=${limit}`
       );
-      if (!response.data.data.length) {
-        toast.error("Nothing to show");
-        return;
-      }
       setAll(false);
       setFollowings(true);
       setPosts(response.data.data);
@@ -66,6 +62,7 @@ function Posts() {
           Followings
         </button>
       </div>
+      {!posts.length && <p className="p-4 text-center">No Post to show</p>}
       {posts.map((post) => (
         <SingleCard key={post._id} postId={post._id} />
       ))}
