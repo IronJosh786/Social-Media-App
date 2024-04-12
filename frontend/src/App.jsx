@@ -13,6 +13,7 @@ import Profile from "./components/Profile.jsx";
 import Posts from "./components/Posts.jsx";
 import Explore from "./components/Explore.jsx";
 import DetailedPost from "./components/DetailedPost.jsx";
+import Bookmarks from "./components/Bookmarks.jsx";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
             <Route path="/detailedPost/:id" element={<DetailedPost />} />
             <Route path="/" element={<Auth />}>
               <Route path="/profile" element={<Profile />} />
+              <Route path="/bookmarks" element={<Bookmarks />} />
             </Route>
           </Route>
         </Routes>

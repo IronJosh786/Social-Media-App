@@ -30,6 +30,10 @@ function Posts() {
       const response = await axios.get(
         `${base}/api/v1/post/get-followings-post?page=${page}&limit=${limit}`
       );
+      if (!response.data.data.length) {
+        toast.error("Nothing to show");
+        return;
+      }
       setAll(false);
       setFollowings(true);
       setPosts(response.data.data);
