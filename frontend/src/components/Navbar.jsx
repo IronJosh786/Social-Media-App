@@ -7,7 +7,11 @@ import axios from "axios";
 import { base } from "../baseUrl.js";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
-import { setUserData, toggleLoggedIn } from "../features/userSlice.js";
+import {
+  setUserData,
+  toggleLoggedIn,
+  setExpiryTime,
+} from "../features/userSlice.js";
 
 function Navbar() {
   const dispatch = useDispatch();
@@ -45,6 +49,7 @@ function Navbar() {
       setProfilePicture(
         "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
       );
+      dispatch(setExpiryTime(0));
       dispatch(toggleLoggedIn(false));
     } catch (error) {
       toast.error(error.response.data.message);

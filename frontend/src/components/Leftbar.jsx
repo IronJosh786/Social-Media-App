@@ -11,8 +11,8 @@ function Leftbar() {
 
   return (
     <div className="hidden lg:block lg:col-span-3 p-4">
-      <ul className="menu bg-base-200 w-56 rounded-box">
-        <li className="p-4">
+      <ul className="menu bg-base-200 rounded-box p-0 flex flex-col gap-8">
+        <li>
           <NavLink to={"/"}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -26,7 +26,7 @@ function Leftbar() {
           </NavLink>
         </li>
         {isLoggedIn && (
-          <li className="p-4">
+          <li>
             <NavLink to={"/profile"}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -41,7 +41,7 @@ function Leftbar() {
           </li>
         )}
         {isLoggedIn && (
-          <li className="p-4">
+          <li>
             <NavLink to={"/bookmarks"}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -55,7 +55,7 @@ function Leftbar() {
             </NavLink>
           </li>
         )}
-        <li className="p-4">
+        <li>
           <NavLink to={"/explore"}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -68,7 +68,7 @@ function Leftbar() {
             Explore
           </NavLink>
         </li>
-        <li className="p-4">
+        <li>
           <button onClick={openModal}>
             <svg
               xmlns="http://www.w3.org/2000/svg"

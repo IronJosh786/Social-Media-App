@@ -149,7 +149,9 @@ function Profile() {
   };
 
   useEffect(() => {
-    fetchData();
+    if (JSON.parse(localStorage.getItem("isLoggedIn"))) {
+      fetchData();
+    }
   }, []);
 
   return (

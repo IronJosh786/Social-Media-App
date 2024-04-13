@@ -14,6 +14,8 @@ import Posts from "./components/Posts.jsx";
 import Explore from "./components/Explore.jsx";
 import DetailedPost from "./components/DetailedPost.jsx";
 import Bookmarks from "./components/Bookmarks.jsx";
+import PendingRequests from "./components/PendingRequests.jsx";
+import Search from "./components/Search.jsx";
 
 function App() {
   return (
@@ -28,6 +30,8 @@ function App() {
             <Route path="/" element={<Posts />} />
             <Route path="/explore" element={<Explore />} />
             <Route path="/detailedPost/:id" element={<DetailedPost />} />
+            <Route path="/pending-requests" element={<PendingRequests />} />
+            <Route path="/search" element={<Search />} />
             <Route path="/" element={<Auth />}>
               <Route path="/profile" element={<Profile />} />
               <Route path="/bookmarks" element={<Bookmarks />} />

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Leftbar from "../components/Leftbar";
 import Rightbar from "../components/Rightbar";
 import { Outlet } from "react-router-dom";
@@ -6,12 +6,14 @@ import { NavLink } from "react-router-dom";
 import axios from "axios";
 import { base } from "../baseUrl.js";
 import { toast } from "sonner";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleLoggedIn, setExpiryTime } from "../features/userSlice.js";
 
 function Home() {
   const [selectedImages, setSelectedImages] = useState([]);
   const [bio, setBio] = useState("");
-  const { isLoggedIn } = useSelector((state) => state.user);
+  const { isLoggedIn, expiryTime } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
   const handleFileChange = (e) => {
     const files = e.target.files;
@@ -61,6 +63,13 @@ function Home() {
   const openModal = () => {
     document.getElementById("my_modal_0").showModal();
   };
+
+  useEffect(() => {
+    if (expiryTime && expiryTime <= Date.now()) {
+      dispatch(toggleLoggedIn(false));
+      dispatch(setExpiryTime(0));
+    }
+  }, [expiryTime]);
 
   return (
     <div className="bg-base-200 grow">
@@ -116,6 +125,32 @@ function Home() {
         <Outlet />
         <Rightbar />
         <div className="btm-nav h-12 sm:h-16 lg:hidden">
+          {isLoggedIn && (
+            <button>
+              <NavLink to={"/pending-requests"}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M14 14.252V16.3414C13.3744 16.1203 12.7013 16 12 16C8.68629 16 6 18.6863 6 22H4C4 17.5817 7.58172 14 12 14C12.6906 14 13.3608 14.0875 14 14.252ZM12 13C8.685 13 6 10.315 6 7C6 3.685 8.685 1 12 1C15.315 1 18 3.685 18 7C18 10.315 15.315 13 12 13ZM12 11C14.21 11 16 9.21 16 7C16 4.79 14.21 3 12 3C9.79 3 8 4.79 8 7C8 9.21 9.79 11 12 11ZM20 17H23V19H20V22.5L15 18L20 13.5V17Z"></path>
+                </svg>
+              </NavLink>
+            </button>
+          )}
+          <button>
+            <NavLink to={"/search"}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M18.031 16.6168L22.3137 20.8995L20.8995 22.3137L16.6168 18.031C15.0769 19.263 13.124 20 11 20C6.032 20 2 15.968 2 11C2 6.032 6.032 2 11 2C15.968 2 20 6.032 20 11C20 13.124 19.263 15.0769 18.031 16.6168ZM16.0247 15.8748C17.2475 14.6146 18 12.8956 18 11C18 7.1325 14.8675 4 11 4C7.1325 4 4 7.1325 4 11C4 14.8675 7.1325 18 11 18C12.8956 18 14.6146 17.2475 15.8748 16.0247L16.0247 15.8748Z"></path>
+              </svg>
+            </NavLink>
+          </button>
           <button>
             <NavLink to={"/"}>
               <svg

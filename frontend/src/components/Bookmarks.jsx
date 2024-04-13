@@ -13,6 +13,10 @@ function Bookmarks() {
       const response = await axios.get(
         `${base}/api/v1/bookmark/get-all-bookmarks`
       );
+      console.log(response.data);
+      if (response.data.message === "No bookmarks") {
+        return;
+      }
       setBookmarks(response.data.bookmarks);
     } catch (error) {
       toast.error(error.response.data.message);
@@ -29,6 +33,7 @@ function Bookmarks() {
       }`}
     >
       <div className="flex flex-col">
+        {!bookmarks.length && <div className="p-4">No Bookmarks to show</div>}
         {bookmarks.map((bookmark) => (
           <SingleCard key={bookmark._id} postId={bookmark.post} />
         ))}
