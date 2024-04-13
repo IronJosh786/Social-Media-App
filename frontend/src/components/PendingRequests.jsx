@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
 import axios from "axios";
 import { toast } from "sonner";
 import { base } from "../baseUrl.js";
+import { useSelector } from "react-redux";
 import SingleRequest from "./SingleRequest.jsx";
+import { useLocation } from "react-router-dom";
 
 function PendingRequests() {
-  const { darkMode } = useSelector((state) => state.theme);
+  const location = useLocation();
+  const isRequestPage = location.pathname.includes("/pending-requests");
   const [requests, setRequests] = useState([]);
+  const { darkMode } = useSelector((state) => state.theme);
   const { isLoggedIn } = useSelector((state) => state.user);
 
   const fetchRequests = async () => {
@@ -30,22 +33,27 @@ function PendingRequests() {
       fetchRequests();
     }
   }, []);
+
   return (
     <div
-      className={`col-span-12 lg:col-span-6 border-x border-b p-4 ${
-        darkMode ? "border-neutral-700" : "border-base-300"
-      }`}
+      className={`col-span-12 lg:col-span-6 border-x border-b py-0 ${
+        isRequestPage ? "px-4" : ""
+      } ${darkMode ? "border-neutral-700" : "border-base-300"}`}
     >
-      <h3 className="text-xl font-bold mb-8">Pending Requests</h3>
-      {!requests.length && <div className="mt-4">No Request to show</div>}
-      {requests.map((request) => (
-        <SingleRequest
-          key={request._id}
-          details={request.requestorDetails[0]}
-          requestId={request._id}
-          fetchRequests={fetchRequests}
-        />
-      ))}
+      {isRequestPage && (
+        <h3 className="py-4 text-xl font-bold">Pending Requests</h3>
+      )}
+      <div className="flex flex-col gap-4">
+        {!requests.length && <div className="mt-4">No Request to show</div>}
+        {requests.map((request) => (
+          <SingleRequest
+            key={request._id}
+            details={request.requestorDetails[0]}
+            requestId={request._id}
+            fetchRequests={fetchRequests}
+          />
+        ))}
+      </div>
     </div>
   );
 }

@@ -13,7 +13,6 @@ function Bookmarks() {
       const response = await axios.get(
         `${base}/api/v1/bookmark/get-all-bookmarks`
       );
-      console.log(response.data);
       if (response.data.message === "No bookmarks") {
         return;
       }
@@ -32,12 +31,11 @@ function Bookmarks() {
         darkMode ? "border-neutral-700" : "border-base-300"
       }`}
     >
-      <div className="flex flex-col">
-        {!bookmarks.length && <div className="p-4">No Bookmarks to show</div>}
-        {bookmarks.map((bookmark) => (
-          <SingleCard key={bookmark._id} postId={bookmark.post} />
-        ))}
-      </div>
+      <h3 className="p-4 text-xl font-bold">Bookmarks</h3>
+      {!bookmarks.length && <div className="p-4">No Bookmarks to show</div>}
+      {bookmarks.map((bookmark) => (
+        <SingleCard key={bookmark._id} postId={bookmark.post} />
+      ))}
     </div>
   );
 }
