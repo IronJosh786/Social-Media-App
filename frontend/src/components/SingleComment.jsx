@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import axios from "axios";
 import { base } from "../baseUrl.js";
+import { useNavigate } from "react-router-dom";
 
 function SingleComment({ comment, id, parentFetch, postId }) {
   const { darkMode } = useSelector((state) => state.theme);
@@ -13,6 +14,8 @@ function SingleComment({ comment, id, parentFetch, postId }) {
   const [commentContent, setCommentContent] = useState(comment.content);
   const [isOwner, setIsOwner] = useState(false);
   const [newComment, setNewComment] = useState("");
+
+  const navigate = useNavigate();
 
   const toggleLike = async (id) => {
     try {
@@ -158,7 +161,14 @@ function SingleComment({ comment, id, parentFetch, postId }) {
           />
         </div>
         <div className="flex flex-col w-full">
-          <p className="font-bold text-sm">{comment.commentedBy[0].username}</p>
+          <button
+            onClick={() =>
+              navigate(`/user-profile/${comment.commentedBy[0]._id}`)
+            }
+            className="font-bold text-sm text-left"
+          >
+            {comment.commentedBy[0].username}
+          </button>
           <div className="py-1">{commentContent}</div>
           <div
             className={`mt-2 flex gap-4 items-center ${

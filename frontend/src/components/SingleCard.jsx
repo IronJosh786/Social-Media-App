@@ -14,6 +14,7 @@ function SingleCard({ postId }) {
     caption: "",
     totalLikeCount: 0,
     commentsOnPost: [],
+    postedBy: "",
   });
   const [isLiked, setIsLiked] = useState(false);
   const { isLoggedIn } = useSelector((state) => state.user);
@@ -47,7 +48,7 @@ function SingleCard({ postId }) {
   const fetchPost = async (id) => {
     try {
       const response = await axios.get(`${base}/api/v1/post/get-post/${id}`);
-      const { _id, images, caption, totalLikeCount, commentsOnPost } =
+      const { _id, images, caption, totalLikeCount, commentsOnPost, postedBy } =
         response.data.data;
       const { avatar, username } = response.data.data.ownerDetails[0];
       setPost({
@@ -58,6 +59,7 @@ function SingleCard({ postId }) {
         images,
         totalLikeCount,
         commentsOnPost,
+        postedBy,
       });
       if (isLoggedIn) {
         const res = await axios.get(
@@ -88,7 +90,12 @@ function SingleCard({ postId }) {
             alt="avatar"
           />
         </div>
-        <p className="font-bold">{post.username}</p>
+        <p
+          onClick={() => navigate(`/user-profile/${post.postedBy}`)}
+          className="font-bold hover:cursor-pointer"
+        >
+          {post.username}
+        </p>
       </div>
       <div
         style={getBackgroundImageStyle()}
@@ -174,7 +181,12 @@ function SingleCard({ postId }) {
         </button>
       </div>
       <p>
-        <span className="font-bold underline underline-offset-2">
+        <span
+          onClick={() => {
+            navigate(`/user-profile/${post.postedBy}`);
+          }}
+          className="font-bold underline underline-offset-2 hover:cursor-pointer"
+        >
           {post.username}
         </span>{" "}
         {post.caption}

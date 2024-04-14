@@ -47,7 +47,7 @@ function Followers() {
           <SingleConnection
             key={follower._id}
             details={follower.followerDetails[0]}
-            id={follower._id}
+            id={follower.followerDetails[0]._id}
           />
         ))}
       </div>

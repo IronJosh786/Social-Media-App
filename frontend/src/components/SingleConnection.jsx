@@ -1,7 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 function SingleConnection({ details, id }) {
-  const viewProfile = async () => {};
+  const navigate = useNavigate();
 
   return (
     <div className="flex flex-col xs:flex-row xs:items-center lg:flex-col gap-4 justify-between sm:items-center xl:items-start bg-base-300 lg:bg-base-200 p-4 lg:p-2 rounded-box">
@@ -17,7 +18,7 @@ function SingleConnection({ details, id }) {
         </div>
       </div>
       <button
-        onClick={() => viewProfile(id)}
+        onClick={() => navigate(`/user-profile/${id}`)}
         className="btn btn-primary btn-sm lg:btn-xs xl:btn-sm"
       >
         View Profile

@@ -18,6 +18,7 @@ import PendingRequests from "./components/PendingRequests.jsx";
 import Search from "./components/Search.jsx";
 import Followers from "./components/Followers.jsx";
 import Followings from "./components/Followings.jsx";
+import PublicProfile from "./components/PublicProfile.jsx";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
             <Route path="/explore" element={<Explore />} />
             <Route path="/detailedPost/:id" element={<DetailedPost />} />
             <Route path="/search" element={<Search />} />
+            <Route path="/user-profile/:id" element={<PublicProfile />} />
             <Route path="/" element={<Auth />}>
               <Route path="/pending-requests" element={<PendingRequests />} />
               <Route path="/followers" element={<Followers />} />

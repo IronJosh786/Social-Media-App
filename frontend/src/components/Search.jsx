@@ -22,7 +22,6 @@ function Search() {
       const response = await axios.get(
         `${base}/api/v1/users/search?query=${q}`
       );
-      console.log(response.data.data);
       const { users, posts } = response.data.data;
 
       setResult({

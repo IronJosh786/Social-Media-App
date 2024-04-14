@@ -19,7 +19,7 @@ function Followings() {
         `${base}/api/v1/connection/get-following`
       );
       if (response.data.message === "No followings") {
-        setFollowers([]);
+        setFollowings([]);
         return;
       }
       setFollowings(response.data.data);
@@ -49,7 +49,7 @@ function Followings() {
           <SingleConnection
             key={following._id}
             details={following.followingDetails[0]}
-            id={following._id}
+            id={following.followingDetails[0]._id}
           />
         ))}
       </div>

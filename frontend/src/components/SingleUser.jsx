@@ -3,12 +3,14 @@ import axios from "axios";
 import { toast } from "sonner";
 import { base } from "../baseUrl.js";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 function SingleUser({ user }) {
   const [connectionStatus, setConnectionStatus] = useState(false);
   const [text, setText] = useState("Follow");
   const [requestId, setRequestId] = useState("");
   const { isLoggedIn } = useSelector((state) => state.user);
+  const navigate = useNavigate();
 
   const follow = async () => {
     if (!isLoggedIn) {
@@ -93,7 +95,12 @@ function SingleUser({ user }) {
         >
           {text}
         </button>
-        <button className="btn btn-sm btn-primary">Profile</button>
+        <button
+          onClick={() => navigate(`/user-profile/${user._id}`)}
+          className="btn btn-sm btn-primary"
+        >
+          Profile
+        </button>
       </div>
     </div>
   );
