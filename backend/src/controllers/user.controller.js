@@ -353,6 +353,69 @@ const getAllUsers = asyncHandler(async (req, res) => {
   return res.status(200).json({ message: "Fetched all users", data: allUsers });
 });
 
+const searchResult = asyncHandler(async (req, res) => {
+  const { query } = req.query;
+
+  const users = await User.find({
+    $or: [
+      { username: { $regex: query, $options: "i" } },
+      { fullName: { $regex: query, $options: "i" } },
+    ],
+  }).select("username fullName avatar bio");
+
+  const posts = await Post.aggregate([
+    {
+      $match: {
+        caption: { $regex: query, $options: "i" },
+      },
+    },
+    {
+      $lookup: {
+        from: "likes",
+        localField: "_id",
+        foreignField: "post",
+        as: "likesOnPost",
+      },
+    },
+    {
+      $addFields: {
+        totalLikes: {
+          $size: "$likesOnPost",
+        },
+      },
+    },
+    {
+      $project: {
+        likesOnPost: 0,
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "postedBy",
+        foreignField: "_id",
+        as: "ownerDetails",
+        pipeline: [
+          {
+            $project: {
+              avatar: 1,
+              fullName: 1,
+              username: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $unwind: "$ownerDetails",
+    },
+  ]);
+
+  return res.status(200).json({
+    message: "Fetched search results",
+    data: { users: users, posts: posts },
+  });
+});
 export {
   registerUser,
   loginUser,
@@ -362,4 +425,5 @@ export {
   editCoverImage,
   getUserProfile,
   getAllUsers,
+  searchResult,
 };
