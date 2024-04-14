@@ -5,6 +5,7 @@ import axios from "axios";
 import { base } from "../baseUrl.js";
 import { toast } from "sonner";
 import { setUserData } from "../features/userSlice.js";
+import { NavLink } from "react-router-dom";
 
 function Profile() {
   const { darkMode } = useSelector((state) => state.theme);
@@ -317,14 +318,26 @@ function Profile() {
         <p className="uppercase font-bold">{userDetails.fullName}</p>
         <p className="mt-2">@{userDetails.username}</p>
         <p className="max-w-[60ch] mt-2 text-sm">{userDetails.bio}</p>
-        <div className="flex flex-col md:flex-row gap-2 md:gap-8 mt-4 text-sm">
+        <div className="flex gap-4 md:gap-8 mt-4 text-sm">
           <p>
             <span className="font-bold">{userDetails.followers.length}</span>{" "}
-            Followers
+            <NavLink
+              to={"/followers"}
+              className={`lg:hidden underline underline-offset-4`}
+            >
+              Followers
+            </NavLink>
+            <span className="hidden lg:inline-flex">Followers</span>
           </p>
           <p>
             <span className="font-bold">{userDetails.followings.length}</span>{" "}
-            Followings
+            <NavLink
+              to={"/followings"}
+              className={`lg:hidden underline underline-offset-4`}
+            >
+              Followings
+            </NavLink>
+            <span className="hidden lg:inline-flex">Followings</span>
           </p>
         </div>
         <p className="text-sm font-bold mt-8">Posts</p>
