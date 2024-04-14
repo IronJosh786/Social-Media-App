@@ -1,3 +1,4 @@
+import mongoose, { isValidObjectId } from "mongoose";
 import { User } from "../models/user.model.js";
 import { Post } from "../models/post.model.js";
 import { Connection } from "../models/connection.model.js";
@@ -416,6 +417,47 @@ const searchResult = asyncHandler(async (req, res) => {
     data: { users: users, posts: posts },
   });
 });
+
+const getPublicProfile = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  if (!isValidObjectId(id)) {
+    return res.status(400).json({ message: "Invalid user id" });
+  }
+
+  const user = await User.findById(id).select(
+    "username fullName bio avatar coverImage"
+  );
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  const posts = await Post.aggregate([
+    {
+      $match: {
+        postedBy: new mongoose.Types.ObjectId(id),
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        images: 1,
+        updatedAt: 1,
+      },
+    },
+    {
+      $sort: {
+        updatedAt: -1,
+      },
+    },
+  ]);
+
+  return res.status(200).json({
+    message: "Fetched user profile",
+    data: { info: user, posts: posts },
+  });
+});
+
 export {
   registerUser,
   loginUser,
@@ -426,4 +468,5 @@ export {
   getUserProfile,
   getAllUsers,
   searchResult,
+  getPublicProfile,
 };

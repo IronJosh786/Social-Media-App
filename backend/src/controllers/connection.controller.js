@@ -73,10 +73,6 @@ const declineRequest = asyncHandler(async (req, res) => {
     return res.status(404).json({ message: "Request not found" });
   }
 
-  // if (!req.user?._id.equals(request.to)) {
-  //   return res.status(404).json({ message: "Only the owner can decline" });
-  // }
-
   const declinedRequest = await Connection.findByIdAndDelete(requestId);
 
   if (!declinedRequest) {
@@ -250,6 +246,33 @@ const connectionStatus = asyncHandler(async (req, res) => {
     .json({ message: "Fetched connection status", data: status });
 });
 
+const getConnections = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  if (!isValidObjectId(id)) {
+    return res.status(400).json({ message: "Invalid user id" });
+  }
+
+  const user = await User.findById(id);
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  const followings = await Connection.find({
+    from: id,
+    status: "accepted",
+  });
+
+  const followers = await Connection.find({
+    to: id,
+    status: "accepted",
+  });
+
+  return res.status(200).json({
+    message: "Fetched connections",
+    data: { followers: followers.length, followings: followings.length },
+  });
+});
+
 export {
   sendRequest,
   acceptRequest,
@@ -259,4 +282,5 @@ export {
   getPendingRequests,
   isFollowing,
   connectionStatus,
+  getConnections,
 };

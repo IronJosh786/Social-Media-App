@@ -11,6 +11,7 @@ import {
   getUserProfile,
   getAllUsers,
   searchResult,
+  getPublicProfile,
 } from "../controllers/user.controller.js";
 
 const router = Router();
@@ -33,5 +34,6 @@ router
 router.route("/get-user-profile").get(verifyJWT, getUserProfile);
 router.route("/get-all-users").get(getAllUsers);
 router.route("/search").get(searchResult);
+router.route("/get-public-profile/:id").get(getPublicProfile);
 
 export default router;

@@ -9,6 +9,7 @@ import {
   getPendingRequests,
   isFollowing,
   sendRequest,
+  getConnections,
 } from "../controllers/connection.controller.js";
 
 const router = Router();
@@ -21,5 +22,5 @@ router.route("/get-following").get(verifyJWT, getFollowing);
 router.route("/get-pending-requests").get(verifyJWT, getPendingRequests);
 router.route("/get-is-following/:userId").get(verifyJWT, isFollowing);
 router.route("/get-connection-status/:userId").get(verifyJWT, connectionStatus);
-
+router.route("/get-public-connection/:id").get(getConnections);
 export default router;
