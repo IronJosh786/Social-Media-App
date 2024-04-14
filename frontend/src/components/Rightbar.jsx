@@ -7,7 +7,7 @@ import PendingRequests from "./PendingRequests.jsx";
 function Rightbar() {
   const { isLoggedIn } = useSelector((state) => state.user);
   return (
-    <div className="hidden lg:flex flex-col gap-8 lg:col-span-3 p-4">
+    <div className="hidden lg:flex flex-col gap-4 lg:col-span-3 p-4">
       {isLoggedIn && (
         <div className="collapse bg-base-300">
           <input type="checkbox" />

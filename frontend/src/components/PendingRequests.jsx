@@ -36,7 +36,7 @@ function PendingRequests() {
 
   return (
     <div
-      className={`col-span-12 lg:col-span-6 border-x border-b py-0 ${
+      className={`col-span-12 lg:col-span-6 border-x border-b lg:border-0 py-0 ${
         isRequestPage ? "px-4" : ""
       } ${darkMode ? "border-neutral-700" : "border-base-300"}`}
     >
