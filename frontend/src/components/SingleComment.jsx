@@ -5,7 +5,7 @@ import axios from "axios";
 import { base } from "../baseUrl.js";
 import { useNavigate } from "react-router-dom";
 
-function SingleComment({ comment, id, parentFetch, postId }) {
+function SingleComment({ comment, id, parentFetch, postId, isAdmin }) {
   const { darkMode } = useSelector((state) => state.theme);
   const { isLoggedIn } = useSelector((state) => state.user);
 
@@ -224,30 +224,31 @@ function SingleComment({ comment, id, parentFetch, postId }) {
               <span className="font-normal"> Likes</span>
             </span>
           </div>
-          {isOwner && (
-            <div className="flex gap-4 justify-end mt-2">
-              <div className="text-base">
-                <i
-                  onClick={() =>
-                    document
-                      .getElementById(`my_modal_2_${comment._id}`)
-                      .showModal()
-                  }
-                  className="ri-pencil-line hover:cursor-pointer"
-                ></i>
+          {isOwner ||
+            (isAdmin && (
+              <div className="flex gap-4 justify-end mt-2">
+                <div className="text-base">
+                  <i
+                    onClick={() =>
+                      document
+                        .getElementById(`my_modal_2_${comment._id}`)
+                        .showModal()
+                    }
+                    className="ri-pencil-line hover:cursor-pointer"
+                  ></i>
+                </div>
+                <div className="text-base">
+                  <i
+                    onClick={() =>
+                      document
+                        .getElementById(`my_modal_1_${comment._id}`)
+                        .showModal()
+                    }
+                    className="ri-delete-bin-6-line hover:cursor-pointer"
+                  ></i>
+                </div>
               </div>
-              <div className="text-base">
-                <i
-                  onClick={() =>
-                    document
-                      .getElementById(`my_modal_1_${comment._id}`)
-                      .showModal()
-                  }
-                  className="ri-delete-bin-6-line hover:cursor-pointer"
-                ></i>
-              </div>
-            </div>
-          )}
+            ))}
         </div>
       </div>
     </div>

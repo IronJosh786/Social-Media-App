@@ -85,6 +85,12 @@ function Home() {
                 onChange={handleFileChange}
                 className="file-input file-input-bordered w-full"
               />
+              <p className="mt-2 label-text px-1 text-red-500">
+                <span className="text-white">Limit:</span> 5 images,{" "}
+                <span className="text-white">Max Size:</span> 3 Mb,{" "}
+                <span className="text-white">Allowed:</span> jpeg, jpg, png,
+                webp
+              </p>
             </div>
             <div className="form-control col-span-2">
               <label className="label">
@@ -115,7 +121,7 @@ function Home() {
         <Leftbar />
         <Outlet />
         <Rightbar />
-        <div className="btm-nav h-12 sm:h-16 lg:hidden">
+        <div className="btm-nav btm-nav-xs lg:hidden">
           {isLoggedIn && (
             <button>
               <NavLink to={"/pending-requests"}>

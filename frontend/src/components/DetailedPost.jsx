@@ -24,6 +24,7 @@ function DetailedPost() {
     avatar: "",
     username: "",
     isOwner: false,
+    isAdmin: false,
   });
 
   const navigate = useNavigate();
@@ -31,8 +32,14 @@ function DetailedPost() {
   const fetchPostDetails = async (id) => {
     try {
       const response = await axios.get(`${base}/api/v1/post/get-post/${id}`);
-      const { images, caption, totalLikeCount, commentsOnPost, isOwner } =
-        response.data.data;
+      const {
+        images,
+        caption,
+        totalLikeCount,
+        commentsOnPost,
+        isOwner,
+        isAdmin,
+      } = response.data.data;
       const { avatar, username } = response.data.data.ownerDetails[0];
       setPost({
         images,
@@ -42,6 +49,7 @@ function DetailedPost() {
         avatar,
         username,
         isOwner,
+        isAdmin,
       });
       setPostCaption(response.data.data.caption);
       if (isLoggedIn) {
@@ -232,34 +240,35 @@ function DetailedPost() {
             </div>
             <div className="font-bold">{post.username}</div>
           </div>
-          {post.isOwner && (
-            <div className="dropdown dropdown-end">
-              <div tabIndex={0} role="button" className="btn m-1">
-                <i className="ri-more-2-line"></i>
+          {post.isOwner ||
+            (post.isAdmin && (
+              <div className="dropdown dropdown-end">
+                <div tabIndex={0} role="button" className="btn m-1">
+                  <i className="ri-more-2-line"></i>
+                </div>
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-28 sm:w-40"
+                >
+                  <li
+                    onClick={() =>
+                      document.getElementById("my_modal_4").showModal()
+                    }
+                    className="w-full"
+                  >
+                    <a className="flex justify-center">Edit</a>
+                  </li>
+                  <li
+                    onClick={() =>
+                      document.getElementById("my_modal_3").showModal()
+                    }
+                    className="w-full"
+                  >
+                    <a className="flex justify-center">Delete</a>
+                  </li>
+                </ul>
               </div>
-              <ul
-                tabIndex={0}
-                className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-28 sm:w-40"
-              >
-                <li
-                  onClick={() =>
-                    document.getElementById("my_modal_4").showModal()
-                  }
-                  className="w-full"
-                >
-                  <a className="flex justify-center">Edit</a>
-                </li>
-                <li
-                  onClick={() =>
-                    document.getElementById("my_modal_3").showModal()
-                  }
-                  className="w-full"
-                >
-                  <a className="flex justify-center">Delete</a>
-                </li>
-              </ul>
-            </div>
-          )}
+            ))}
         </div>
         <div
           style={getBackgroundImageStyle()}
@@ -429,6 +438,7 @@ function DetailedPost() {
                   id={comment._id}
                   parentFetch={fetchPostDetails}
                   postId={id}
+                  isAdmin={post.isAdmin}
                 />
               );
             })}

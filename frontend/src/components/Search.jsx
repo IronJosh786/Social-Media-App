@@ -35,6 +35,12 @@ function Search() {
     }
   };
 
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      handleSubmit(query);
+    }
+  };
+
   useEffect(() => {
     const storedQuery = localStorage.getItem("searchQuery");
     if (storedQuery) {
@@ -56,6 +62,7 @@ function Search() {
           placeholder="Search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={handleKeyPress}
           className="input input-bordered w-full pr-8"
         />
         <button
@@ -80,7 +87,8 @@ function Search() {
       </div>
       <h3 className="mt-4 text-lg font-medium">Result for "{query}"</h3>
       <div className="mt-4">
-        <h4>Users</h4>
+        <h4 className="mb-4">Users</h4>
+        {!result.users.length && <div>No user to show</div>}
         <div className="grid grid-cols-1 gap-4 p-4 justify-items-center">
           {result.users.map((user) => (
             <SingleUser key={user._id} user={user} />
@@ -89,6 +97,7 @@ function Search() {
       </div>
       <div className="mt-4">
         <h4 className="mb-4">Posts</h4>
+        {!result.posts.length && <div>No post to show</div>}
         <div className="grid grid-cols-1 justify-items-center p-0">
           {result.posts.map((post) => (
             <SingleCard key={post._id} postId={post._id} />

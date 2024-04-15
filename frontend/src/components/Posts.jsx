@@ -80,13 +80,19 @@ function Posts() {
     >
       <div className="flex justify-between w-full">
         <button
-          onClick={fetchPosts}
+          onClick={() => {
+            setPage(1);
+            fetchPosts();
+          }}
           className={`btn grow w-1/2 ${all ? "bg-base-300" : ""}`}
         >
           All
         </button>
         <button
-          onClick={fetchFollowingsPost}
+          onClick={() => {
+            setPage(1);
+            fetchFollowingsPost();
+          }}
           className={`btn grow w-1/2 ${followings ? "bg-base-300" : ""}`}
         >
           Followings
@@ -98,11 +104,11 @@ function Posts() {
       ))}
       <div className="flex justify-center my-2">
         <div className="join drop-shadow-md">
-          <button onClick={decrementPage} className="join-item btn">
+          <button onClick={decrementPage} className="join-item btn btn-sm">
             «
           </button>
-          <button className="join-item btn">Page {page}</button>
-          <button onClick={incrementPage} className="join-item btn">
+          <button className="join-item btn btn-sm">{page}</button>
+          <button onClick={incrementPage} className="join-item btn btn-sm">
             »
           </button>
         </div>
