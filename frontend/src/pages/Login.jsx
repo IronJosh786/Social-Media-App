@@ -4,11 +4,7 @@ import Cookies from "js-cookie";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
-import {
-  toggleLoggedIn,
-  setUserData,
-  setExpiryTime,
-} from "../features/userSlice.js";
+import { toggleLoggedIn, setUserData } from "../features/userSlice.js";
 import { base } from "../baseUrl.js";
 
 function Login() {
@@ -38,10 +34,9 @@ function Login() {
       );
       toast.success(response.data.message);
       dispatch(toggleLoggedIn(true));
-      dispatch(setExpiryTime(Date.now() + 24 * 60 * 60 * 1000));
       dispatch(setUserData(response.data.data.avatar));
       Cookies.set("access_token", response.data.data.accessToken, {
-        expires: 1,
+        expires: 1 / (24 * 60),
         path: "",
       });
       navigate("/");

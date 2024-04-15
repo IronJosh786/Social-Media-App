@@ -1,13 +1,9 @@
 import React from "react";
-import Login from "../pages/Login";
-import Cookies from "js-cookie";
 import { Outlet, Navigate } from "react-router-dom";
-
+import { getLocalStorage } from "../localStorage";
 function Auth() {
-  let token =
-    JSON.parse(localStorage.getItem("isLoggedIn")) ||
-    Cookies.get("access_token");
-  return token ? <Outlet /> : <Navigate to={"/login"} replace />;
+  const token = getLocalStorage("isLoggedIn");
+  return token ? <Outlet /> : <Navigate to={"/"} replace />;
 }
 
 export default Auth;

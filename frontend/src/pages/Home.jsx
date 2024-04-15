@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Leftbar from "../components/Leftbar";
 import Rightbar from "../components/Rightbar";
 import { Outlet } from "react-router-dom";
@@ -6,14 +6,12 @@ import { NavLink } from "react-router-dom";
 import axios from "axios";
 import { base } from "../baseUrl.js";
 import { toast } from "sonner";
-import { useDispatch, useSelector } from "react-redux";
-import { toggleLoggedIn, setExpiryTime } from "../features/userSlice.js";
+import { useSelector } from "react-redux";
 
 function Home() {
   const [selectedImages, setSelectedImages] = useState([]);
   const [bio, setBio] = useState("");
-  const { isLoggedIn, expiryTime } = useSelector((state) => state.user);
-  const dispatch = useDispatch();
+  const { isLoggedIn } = useSelector((state) => state.user);
 
   const handleFileChange = (e) => {
     const files = e.target.files;
@@ -63,13 +61,6 @@ function Home() {
   const openModal = () => {
     document.getElementById("my_modal_0").showModal();
   };
-
-  useEffect(() => {
-    if (expiryTime && expiryTime <= Date.now()) {
-      dispatch(toggleLoggedIn(false));
-      dispatch(setExpiryTime(0));
-    }
-  }, [expiryTime]);
 
   return (
     <div className="bg-base-200 grow">

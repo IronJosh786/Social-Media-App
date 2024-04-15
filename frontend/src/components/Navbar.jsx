@@ -7,11 +7,8 @@ import axios from "axios";
 import { base } from "../baseUrl.js";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
-import {
-  setUserData,
-  toggleLoggedIn,
-  setExpiryTime,
-} from "../features/userSlice.js";
+import { setUserData, toggleLoggedIn } from "../features/userSlice.js";
+import { getLocalStorage } from "../localStorage.js";
 
 function Navbar() {
   const dispatch = useDispatch();
@@ -49,7 +46,6 @@ function Navbar() {
       setProfilePicture(
         "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
       );
-      dispatch(setExpiryTime(0));
       dispatch(toggleLoggedIn(false));
     } catch (error) {
       toast.error(error.response.data.message);
@@ -65,11 +61,21 @@ function Navbar() {
     }
   };
 
+  const checkAuthenticationStatus = () => {
+    const token = getLocalStorage("isLoggedIn");
+    if (!token) {
+      dispatch(toggleLoggedIn(false));
+    }
+  };
+
   useEffect(() => {
+    checkAuthenticationStatus();
+    const intervalId = setInterval(checkAuthenticationStatus, 60 * 60 * 1000);
     if (isLoggedIn) {
       fetching();
     }
-  }, [userData]);
+    return () => clearInterval(intervalId);
+  }, [userData, isLoggedIn]);
 
   return (
     <div className="navbar bg-base-100 ">

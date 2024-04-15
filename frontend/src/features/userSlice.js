@@ -1,8 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { getLocalStorage } from "../localStorage.js";
+import { setLocalStorage } from "../localStorage.js";
 
 const initialState = {
-  isLoggedIn: localStorage.getItem("isLoggedIn") === "true",
-  expiryTime: parseInt(localStorage.getItem("expiryTime"), 10) || 0,
+  isLoggedIn: getLocalStorage("isLoggedIn") ? true : false,
   userData: {
     avatar: "",
   },
@@ -14,11 +15,7 @@ const userSlice = createSlice({
   reducers: {
     toggleLoggedIn: (state, action) => {
       state.isLoggedIn = action.payload;
-      localStorage.setItem("isLoggedIn", action.payload);
-    },
-    setExpiryTime: (state, action) => {
-      state.expiryTime = action.payload;
-      localStorage.setItem("expiryTime", JSON.stringify(action.payload));
+      setLocalStorage("isLoggedIn", action.payload);
     },
     setUserData: (state, action) => {
       state.userData = action.payload;
@@ -26,5 +23,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { toggleLoggedIn, setUserData, setExpiryTime } = userSlice.actions;
+export const { toggleLoggedIn, setUserData } = userSlice.actions;
 export default userSlice.reducer;
