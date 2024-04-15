@@ -110,10 +110,12 @@ const editComment = asyncHandler(async (req, res) => {
     return res.status(404).json({ message: "Comment not found" });
   }
 
-  if (!comment.commentedBy.equals(req.user?._id)) {
-    return res
-      .status(400)
-      .json({ message: "Only owner can update the comment" });
+  if (!req.user?.isAdmin) {
+    if (!comment.commentedBy.equals(req.user?._id)) {
+      return res
+        .status(400)
+        .json({ message: "Only owner can update the comment" });
+    }
   }
 
   comment.content = content;
@@ -137,10 +139,12 @@ const deleteComment = asyncHandler(async (req, res) => {
     return res.status(404).json({ message: "Comment not found" });
   }
 
-  if (!comment.commentedBy.equals(req.user?._id)) {
-    return res
-      .status(400)
-      .json({ message: "Only owner can delete the comment" });
+  if (!req.user?.isAdmin) {
+    if (!comment.commentedBy.equals(req.user?._id)) {
+      return res
+        .status(400)
+        .json({ message: "Only owner can delete the comment" });
+    }
   }
 
   const deletedComment = await Comment.findByIdAndDelete(commentId);

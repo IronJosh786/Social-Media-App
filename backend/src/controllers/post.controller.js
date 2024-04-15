@@ -116,7 +116,7 @@ const getPostById = asyncHandler(async (req, res) => {
 
   let isOwner = false;
   let requestorId = "";
-
+  let isAdmin = false;
   const token =
     req.cookies?.access_token ||
     req.headers?.authorization?.split(" ")[1] ||
@@ -126,7 +126,7 @@ const getPostById = asyncHandler(async (req, res) => {
     const user = await User.findById(decodedToken._id).select(
       "-refreshToken -password"
     );
-
+    isAdmin = user.isAdmin;
     if (user) {
       requestorId = user._id;
     }
@@ -257,7 +257,7 @@ const getPostById = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     message: "Fetched the post details",
-    data: { ...post[0], isOwner },
+    data: { ...post[0], isOwner, isAdmin },
   });
 });
 
