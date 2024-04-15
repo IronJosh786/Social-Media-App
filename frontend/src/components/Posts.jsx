@@ -38,13 +38,43 @@ function Posts() {
     }
   };
 
+  const incrementPage = async () => {
+    if (!posts.length || posts.length < 10) {
+      toast.error("No more posts to fetch");
+      return;
+    }
+    setPage((prev) => prev + 1);
+    if (all) {
+      fetchPosts();
+    } else {
+      fetchFollowingsPost();
+    }
+  };
+
+  const decrementPage = async () => {
+    if (page === 1) {
+      toast.error("This is the start of posts");
+      return;
+    }
+    setPage((prev) => prev - 1);
+    if (all) {
+      fetchPosts();
+    } else {
+      fetchFollowingsPost();
+    }
+  };
+
   useEffect(() => {
-    fetchPosts();
-  }, []);
+    if (all) {
+      fetchPosts();
+    } else {
+      fetchFollowingsPost();
+    }
+  }, [page]);
 
   return (
     <div
-      className={`col-span-12 lg:col-span-6 border-x border-b pb-4 ${
+      className={`col-span-12 lg:col-span-6 border-x border-b ${
         darkMode ? "border-neutral-700" : "border-base-300"
       }`}
     >
@@ -66,6 +96,17 @@ function Posts() {
       {posts.map((post) => (
         <SingleCard key={post._id} postId={post._id} />
       ))}
+      <div className="flex justify-center my-2">
+        <div className="join drop-shadow-md">
+          <button onClick={decrementPage} className="join-item btn">
+            «
+          </button>
+          <button className="join-item btn">Page {page}</button>
+          <button onClick={incrementPage} className="join-item btn">
+            »
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
