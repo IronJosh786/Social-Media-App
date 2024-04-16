@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js",
     "start": "node src/index.js",
-    "build-frontend": "cd ../frontend && npm install && npm run build",
+    "build-frontend": "cd frontend && npm install && npm run build",
     "build": "npm install && npm run build-frontend"
   },
   "keywords": [
