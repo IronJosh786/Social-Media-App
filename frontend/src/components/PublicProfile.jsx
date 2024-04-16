@@ -4,7 +4,6 @@ import { base } from "../baseUrl.js";
 import { useSelector } from "react-redux";
 import React, { useEffect, useState } from "react";
 import { NavLink, useParams } from "react-router-dom";
-import SingleProfileCard from "./SingleProfileCard.jsx";
 import SingleCard from "./SingleCard.jsx";
 
 function PublicProfile() {
