@@ -39,10 +39,17 @@ function SingleCard({ postId }) {
       const response = await axios.post(
         `${base}/api/v1/like/toggle-post-like/${id}`
       );
-      await fetchPost(id);
     } catch (error) {
       toast.error(error.response.data.message);
+    } finally {
+      fetchPost(id);
     }
+  };
+
+  const handleLikeClick = () => {
+    const flag = !isLiked;
+    setIsLiked(flag);
+    toggleLike(postId);
   };
 
   const fetchPost = async (id) => {
@@ -120,9 +127,7 @@ function SingleCard({ postId }) {
           className={`flex gap-4 items-center ${isLiked ? "block" : "hidden"}`}
         >
           <button
-            onClick={() => {
-              toggleLike(post._id);
-            }}
+            onClick={handleLikeClick}
             className="h-6 w-6 active:scale-90 transition all ease-in-out duration-200"
           >
             <svg
@@ -145,9 +150,7 @@ function SingleCard({ postId }) {
           className={`flex gap-4 items-center ${isLiked ? "hidden" : "block"}`}
         >
           <button
-            onClick={() => {
-              toggleLike(post._id);
-            }}
+            onClick={handleLikeClick}
             className="h-6 w-6 active:scale-90 transition all ease-in-out duration-200"
           >
             <svg

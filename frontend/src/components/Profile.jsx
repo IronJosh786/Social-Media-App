@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import SingleProfileCard from "./SingleProfileCard";
+import SingleCard from "./SingleCard.jsx";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { base } from "../baseUrl.js";
@@ -344,7 +344,7 @@ function Profile() {
         {userDetails.posts.length ? (
           <div className="flex flex-col gap-4 mt-4">
             {userDetails.posts.map((post) => (
-              <SingleProfileCard key={post._id} post={post} />
+              <SingleCard key={post._id} postId={post._id} />
             ))}
           </div>
         ) : (
