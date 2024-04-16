@@ -80,7 +80,7 @@ function DetailedPost() {
   };
 
   const addNewComment = async () => {
-    if (!newComment) {
+    if (!newComment || !newComment.trim()) {
       toast.error("Cannot post empty comment");
       return;
     }
@@ -97,10 +97,6 @@ function DetailedPost() {
   };
 
   const toggleLike = async (id) => {
-    if (!isLoggedIn) {
-      toast.error("Login Required");
-      return;
-    }
     try {
       const response = await axios.post(
         `${base}/api/v1/like/toggle-post-like/${id}`
@@ -113,16 +109,18 @@ function DetailedPost() {
   };
 
   const handleLikeClick = () => {
+    if (!isLoggedIn) {
+      toast.error("Login Required");
+      return;
+    }
     const flag = !isLiked;
+    const newCount = flag ? post.totalLikeCount + 1 : post.totalLikeCount - 1;
+    setPost({ ...post, totalLikeCount: newCount });
     setIsLiked(flag);
     toggleLike(id);
   };
 
   const toggleBookmark = async (id) => {
-    if (!isLoggedIn) {
-      toast.error("Login Required");
-      return;
-    }
     try {
       const response = await axios.post(
         `${base}/api/v1/bookmark/toggle-bookmark/${id}`
@@ -136,6 +134,10 @@ function DetailedPost() {
   };
 
   const handleBookmarkClick = () => {
+    if (!isLoggedIn) {
+      toast.error("Login Required");
+      return;
+    }
     const flag = !isBookmarked;
     setIsBookmarked(flag);
     toggleBookmark(id);
@@ -146,8 +148,9 @@ function DetailedPost() {
   };
 
   const handleCaptionUpdate = async () => {
-    if (!postCaption) {
+    if (!postCaption || !postCaption.trim()) {
       toast.error("Cannot post empty caption");
+      return;
     }
     try {
       const response = await axios.patch(

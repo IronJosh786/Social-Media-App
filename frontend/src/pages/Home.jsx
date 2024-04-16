@@ -30,7 +30,7 @@ function Home() {
   };
 
   const handleFormSubmit = async (e) => {
-    if (!bio || !selectedImages) {
+    if (!bio || !bio.trim() || !selectedImages) {
       toast.error("Both fields are required");
       return;
     }
@@ -128,7 +128,7 @@ function Home() {
               behavior: "smooth",
             });
           }}
-          className="btn btn-outline rounded-full fixed right-8 sm:right-12 bottom-12"
+          className="btn btn-outline rounded-full fixed left-4 sm:left-12 bottom-12"
         >
           <i className="ri-arrow-up-wide-line"></i>
         </button>

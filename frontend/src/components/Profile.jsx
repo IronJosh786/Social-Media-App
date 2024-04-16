@@ -96,14 +96,18 @@ function Profile() {
 
   const handleDetailSubmit = async () => {
     const data = {
-      ...(updatedDetails.username && { username: updatedDetails.username }),
-      ...(updatedDetails.fullName && { fullName: updatedDetails.fullName }),
-      ...(updatedDetails.bio && { bio: updatedDetails.bio }),
+      ...(updatedDetails.username && {
+        username: updatedDetails.username.trim(),
+      }),
+      ...(updatedDetails.fullName && {
+        fullName: updatedDetails.fullName.trim(),
+      }),
+      ...(updatedDetails.bio && { bio: updatedDetails.bio.trim() }),
       ...(updatedDetails.oldpassword && {
-        currentPassword: updatedDetails.oldpassword,
+        currentPassword: updatedDetails.oldpassword.trim(),
       }),
       ...(updatedDetails.newpassword && {
-        newPassword: updatedDetails.newpassword,
+        newPassword: updatedDetails.newpassword.trim(),
       }),
     };
 

@@ -30,7 +30,13 @@ function SingleComment({ comment, id, parentFetch, postId, isAdmin }) {
   };
 
   const handleLikeClick = () => {
+    if (!isLoggedIn) {
+      toast.error("Login required");
+      return;
+    }
     const flag = !isLiked;
+    const newCount = flag ? commentLikes + 1 : commentLikes - 1;
+    setCommentLikes(newCount);
     setIsLiked(flag);
     toggleLike(id);
   };
@@ -67,7 +73,7 @@ function SingleComment({ comment, id, parentFetch, postId, isAdmin }) {
   };
 
   const handleCommentUpdate = async (id) => {
-    if (!newComment) {
+    if (!newComment || !newComment.trim()) {
       toast.error("Cannot post empty comment");
       return;
     }

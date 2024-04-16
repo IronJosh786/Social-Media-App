@@ -31,10 +31,6 @@ function SingleCard({ postId }) {
   };
 
   const toggleLike = async (id) => {
-    if (!isLoggedIn) {
-      toast.error("Login Required");
-      return;
-    }
     try {
       const response = await axios.post(
         `${base}/api/v1/like/toggle-post-like/${id}`
@@ -47,7 +43,13 @@ function SingleCard({ postId }) {
   };
 
   const handleLikeClick = () => {
+    if (!isLoggedIn) {
+      toast.error("Login Required");
+      return;
+    }
     const flag = !isLiked;
+    const newCount = flag ? post.totalLikeCount + 1 : post.totalLikeCount - 1;
+    setPost({ ...post, totalLikeCount: newCount });
     setIsLiked(flag);
     toggleLike(postId);
   };
