@@ -13,9 +13,12 @@ export const getLocalStorage = (key) => {
     return null;
   }
   storedItem = JSON.parse(storedItem);
+  if (!storedItem.value) {
+    return null;
+  }
   const time = Date.now();
   if (storedItem.expiresIn < time) {
-    localStorage.removeItem(key);
+    setLocalStorage("isLoggedIn", false);
     return null;
   }
   return storedItem.value;

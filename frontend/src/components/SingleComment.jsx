@@ -224,31 +224,30 @@ function SingleComment({ comment, id, parentFetch, postId, isAdmin }) {
               <span className="font-normal"> Likes</span>
             </span>
           </div>
-          {isOwner ||
-            (isAdmin && (
-              <div className="flex gap-4 justify-end mt-2">
-                <div className="text-base">
-                  <i
-                    onClick={() =>
-                      document
-                        .getElementById(`my_modal_2_${comment._id}`)
-                        .showModal()
-                    }
-                    className="ri-pencil-line hover:cursor-pointer"
-                  ></i>
-                </div>
-                <div className="text-base">
-                  <i
-                    onClick={() =>
-                      document
-                        .getElementById(`my_modal_1_${comment._id}`)
-                        .showModal()
-                    }
-                    className="ri-delete-bin-6-line hover:cursor-pointer"
-                  ></i>
-                </div>
+          {(isOwner || isAdmin) && (
+            <div className="flex gap-4 justify-end mt-2">
+              <div className="text-base">
+                <i
+                  onClick={() =>
+                    document
+                      .getElementById(`my_modal_2_${comment._id}`)
+                      .showModal()
+                  }
+                  className="ri-pencil-line hover:cursor-pointer"
+                ></i>
               </div>
-            ))}
+              <div className="text-base">
+                <i
+                  onClick={() =>
+                    document
+                      .getElementById(`my_modal_1_${comment._id}`)
+                      .showModal()
+                  }
+                  className="ri-delete-bin-6-line hover:cursor-pointer"
+                ></i>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

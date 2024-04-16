@@ -70,7 +70,7 @@ function Navbar() {
 
   useEffect(() => {
     checkAuthenticationStatus();
-    const intervalId = setInterval(checkAuthenticationStatus, 60 * 60 * 1000);
+    const intervalId = setInterval(checkAuthenticationStatus, 5 * 60 * 1000);
     if (isLoggedIn) {
       fetching();
     }

@@ -240,35 +240,34 @@ function DetailedPost() {
             </div>
             <div className="font-bold">{post.username}</div>
           </div>
-          {post.isOwner ||
-            (post.isAdmin && (
-              <div className="dropdown dropdown-end">
-                <div tabIndex={0} role="button" className="btn m-1">
-                  <i className="ri-more-2-line"></i>
-                </div>
-                <ul
-                  tabIndex={0}
-                  className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-28 sm:w-40"
-                >
-                  <li
-                    onClick={() =>
-                      document.getElementById("my_modal_4").showModal()
-                    }
-                    className="w-full"
-                  >
-                    <a className="flex justify-center">Edit</a>
-                  </li>
-                  <li
-                    onClick={() =>
-                      document.getElementById("my_modal_3").showModal()
-                    }
-                    className="w-full"
-                  >
-                    <a className="flex justify-center">Delete</a>
-                  </li>
-                </ul>
+          {(post.isOwner || post.isAdmin) && (
+            <div className="dropdown dropdown-end">
+              <div tabIndex={0} role="button" className="btn m-1">
+                <i className="ri-more-2-line"></i>
               </div>
-            ))}
+              <ul
+                tabIndex={0}
+                className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-28 sm:w-40"
+              >
+                <li
+                  onClick={() =>
+                    document.getElementById("my_modal_4").showModal()
+                  }
+                  className="w-full"
+                >
+                  <a className="flex justify-center">Edit</a>
+                </li>
+                <li
+                  onClick={() =>
+                    document.getElementById("my_modal_3").showModal()
+                  }
+                  className="w-full"
+                >
+                  <a className="flex justify-center">Delete</a>
+                </li>
+              </ul>
+            </div>
+          )}
         </div>
         <div
           style={getBackgroundImageStyle()}

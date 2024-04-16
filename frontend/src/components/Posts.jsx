@@ -18,20 +18,17 @@ function Posts() {
       const response = await axios.get(
         `${base}/api/v1/post/get-all-posts?page=${page}&limit=${limit}`
       );
-      setAll(true);
-      setFollowings(false);
       setPosts(response.data.data);
     } catch (error) {
       toast.error(error.response.data.message);
     }
   };
+
   const fetchFollowingsPost = async () => {
     try {
       const response = await axios.get(
         `${base}/api/v1/post/get-followings-post?page=${page}&limit=${limit}`
       );
-      setAll(false);
-      setFollowings(true);
       setPosts(response.data.data);
     } catch (error) {
       toast.error(error.response.data.message);
@@ -44,11 +41,6 @@ function Posts() {
       return;
     }
     setPage((prev) => prev + 1);
-    if (all) {
-      fetchPosts();
-    } else {
-      fetchFollowingsPost();
-    }
   };
 
   const decrementPage = async () => {
@@ -57,11 +49,20 @@ function Posts() {
       return;
     }
     setPage((prev) => prev - 1);
-    if (all) {
-      fetchPosts();
-    } else {
-      fetchFollowingsPost();
-    }
+  };
+
+  const handleAllClick = () => {
+    const page = 1;
+    setPage(page);
+    setAll(true);
+    setFollowings(false);
+  };
+
+  const handleFollowingsClick = () => {
+    const page = 1;
+    setPage(page);
+    setAll(false);
+    setFollowings(true);
   };
 
   useEffect(() => {
@@ -70,7 +71,11 @@ function Posts() {
     } else {
       fetchFollowingsPost();
     }
-  }, [page]);
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [page, all]);
 
   return (
     <div
@@ -80,19 +85,13 @@ function Posts() {
     >
       <div className="flex justify-between w-full">
         <button
-          onClick={() => {
-            setPage(1);
-            fetchPosts();
-          }}
+          onClick={handleAllClick}
           className={`btn grow w-1/2 ${all ? "bg-base-300" : ""}`}
         >
           All
         </button>
         <button
-          onClick={() => {
-            setPage(1);
-            fetchFollowingsPost();
-          }}
+          onClick={handleFollowingsClick}
           className={`btn grow w-1/2 ${followings ? "bg-base-300" : ""}`}
         >
           Followings
