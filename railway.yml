@@ -1,0 +1,12 @@
+# railway.yml
+
+version: 1
+services:
+  frontend:
+    type: node
+    buildCommand: vite build
+    startCommand: npm run start:prod
+  backend:
+    type: node
+    buildCommand: npm run build
+    startCommand: npm start
