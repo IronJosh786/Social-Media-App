@@ -121,6 +121,17 @@ function Home() {
         <Leftbar />
         <Outlet />
         <Rightbar />
+        <button
+          onClick={() => {
+            window.scrollTo({
+              top: 0,
+              behavior: "smooth",
+            });
+          }}
+          className="btn btn-outline rounded-full fixed right-8 sm:right-12 bottom-12"
+        >
+          <i className="ri-arrow-up-wide-line"></i>
+        </button>
         <div className="btm-nav btm-nav-xs lg:hidden">
           <button>
             <NavLink to={"/"}>
