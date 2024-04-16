@@ -18,12 +18,15 @@ function SingleComment({ comment, id, parentFetch, postId, isAdmin }) {
   const navigate = useNavigate();
 
   const toggleLike = async (id) => {
+    const flag = !isLiked;
+    setIsLiked(flag);
     try {
       const response = await axios.post(
         `${base}/api/v1/like/toggle-comment-like/${id}`
       );
       fetchData(id);
     } catch (error) {
+      setIsLiked(!flag);
       toast.error(error.response.data.message);
     }
   };

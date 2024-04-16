@@ -97,6 +97,8 @@ function DetailedPost() {
   };
 
   const toggleLike = async (id) => {
+    const flag = !isLiked;
+    setIsLiked(flag);
     if (!isLoggedIn) {
       toast.error("Login Required");
       return;
@@ -107,11 +109,14 @@ function DetailedPost() {
       );
       await fetchPostDetails(id);
     } catch (error) {
+      setIsLiked(!flag);
       toast.error(error.response.data.message);
     }
   };
 
   const toggleBookmark = async (id) => {
+    const flag = !isBookmarked;
+    setIsBookmarked(flag);
     if (!isLoggedIn) {
       toast.error("Login Required");
       return;
@@ -120,8 +125,10 @@ function DetailedPost() {
       const response = await axios.post(
         `${base}/api/v1/bookmark/toggle-bookmark/${id}`
       );
+      toast.success(response.data.message);
       await fetchPostDetails(id);
     } catch (error) {
+      setIsBookmarked(!flag);
       toast.error(error.response.data.message);
     }
   };
