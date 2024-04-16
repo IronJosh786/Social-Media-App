@@ -97,8 +97,6 @@ function DetailedPost() {
   };
 
   const toggleLike = async (id) => {
-    const flag = !isLiked;
-    setIsLiked(flag);
     if (!isLoggedIn) {
       toast.error("Login Required");
       return;
@@ -107,16 +105,20 @@ function DetailedPost() {
       const response = await axios.post(
         `${base}/api/v1/like/toggle-post-like/${id}`
       );
-      await fetchPostDetails(id);
     } catch (error) {
-      setIsLiked(!flag);
       toast.error(error.response.data.message);
+    } finally {
+      fetchPostDetails(id);
     }
   };
 
+  const handleLikeClick = () => {
+    const flag = !isLiked;
+    setIsLiked(flag);
+    toggleLike(id);
+  };
+
   const toggleBookmark = async (id) => {
-    const flag = !isBookmarked;
-    setIsBookmarked(flag);
     if (!isLoggedIn) {
       toast.error("Login Required");
       return;
@@ -126,11 +128,17 @@ function DetailedPost() {
         `${base}/api/v1/bookmark/toggle-bookmark/${id}`
       );
       toast.success(response.data.message);
-      await fetchPostDetails(id);
     } catch (error) {
-      setIsBookmarked(!flag);
       toast.error(error.response.data.message);
+    } finally {
+      fetchPostDetails(id);
     }
+  };
+
+  const handleBookmarkClick = () => {
+    const flag = !isBookmarked;
+    setIsBookmarked(flag);
+    toggleBookmark(id);
   };
 
   const handleCaptionChange = (e) => {
@@ -156,7 +164,7 @@ function DetailedPost() {
 
   const handleDeletePost = async () => {
     try {
-      await toggleBookmark(id);
+      toggleBookmark(id);
       const response = await axios.delete(
         `${base}/api/v1/post/delete-post/${id}`
       );
@@ -301,9 +309,7 @@ function DetailedPost() {
             }`}
           >
             <button
-              onClick={() => {
-                toggleLike(id);
-              }}
+              onClick={handleLikeClick}
               className="h-6 w-6 active:scale-90 transition all ease-in-out duration-200"
             >
               <svg
@@ -328,9 +334,7 @@ function DetailedPost() {
             }`}
           >
             <button
-              onClick={() => {
-                toggleLike(id);
-              }}
+              onClick={handleLikeClick}
               className="h-6 w-6 active:scale-90 transition all ease-in-out duration-200"
             >
               <svg
@@ -355,9 +359,7 @@ function DetailedPost() {
             }`}
           >
             <button
-              onClick={() => {
-                toggleBookmark(id);
-              }}
+              onClick={handleBookmarkClick}
               className="h-6 w-6 active:scale-90 transition all ease-in-out duration-200"
             >
               <svg
@@ -378,9 +380,7 @@ function DetailedPost() {
             }`}
           >
             <button
-              onClick={() => {
-                toggleBookmark(id);
-              }}
+              onClick={handleBookmarkClick}
               className="h-6 w-6 active:scale-90 transition all ease-in-out duration-200"
             >
               <svg

@@ -18,17 +18,21 @@ function SingleComment({ comment, id, parentFetch, postId, isAdmin }) {
   const navigate = useNavigate();
 
   const toggleLike = async (id) => {
-    const flag = !isLiked;
-    setIsLiked(flag);
     try {
       const response = await axios.post(
         `${base}/api/v1/like/toggle-comment-like/${id}`
       );
-      fetchData(id);
     } catch (error) {
-      setIsLiked(!flag);
       toast.error(error.response.data.message);
+    } finally {
+      fetchData(id);
     }
+  };
+
+  const handleLikeClick = () => {
+    const flag = !isLiked;
+    setIsLiked(flag);
+    toggleLike(id);
   };
 
   const fetchData = async (id) => {
@@ -179,9 +183,7 @@ function SingleComment({ comment, id, parentFetch, postId, isAdmin }) {
             }`}
           >
             <button
-              onClick={() => {
-                toggleLike(comment._id);
-              }}
+              onClick={handleLikeClick}
               className="h-4 w-4 active:scale-90 transition all ease-in-out duration-200"
             >
               <svg
