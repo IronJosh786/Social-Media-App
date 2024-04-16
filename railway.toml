@@ -1,0 +1,15 @@
+# railway.toml
+
+version = 1
+
+[[services]]
+id = "frontend"
+type = "node"
+buildCommand = "vite build"
+startCommand = "npm run start:prod"
+
+[[services]]
+id = "backend"
+type = "node"
+buildCommand = "npm run build"
+startCommand = "npm start"
