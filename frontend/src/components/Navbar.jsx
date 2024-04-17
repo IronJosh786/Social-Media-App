@@ -3,12 +3,13 @@ import { NavLink, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleTheme } from "../features/themeSlice.js";
 import { useNavigate } from "react-router-dom";
-import axios from "../axios.js";
+import axios, { setHeader } from "../axios.js";
 import { base } from "../baseUrl.js";
-import Cookies from "js-cookie";
+import Cookie from "js-cookie";
 import { toast } from "sonner";
 import { setUserData, toggleLoggedIn } from "../features/userSlice.js";
 import { getLocalStorage } from "../localStorage.js";
+import Cookies from "js-cookie";
 
 function Navbar() {
   const dispatch = useDispatch();
@@ -65,6 +66,9 @@ function Navbar() {
     const token = getLocalStorage("isLoggedIn");
     if (!token) {
       dispatch(toggleLoggedIn(false));
+    }
+    if (token) {
+      setHeader(Cookies.get("access_token"));
     }
   };
 

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function NotFound() {
   const [countdown, setCountdown] = useState(5);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -12,11 +12,11 @@ function NotFound() {
 
     if (countdown === 0) {
       clearInterval(timer);
-      history.push("/");
+      navigate("/");
     }
 
     return () => clearInterval(timer);
-  }, [countdown, history]);
+  }, [countdown, navigate]);
 
   return (
     <div className="hero min-h-screen bg-base-200">
