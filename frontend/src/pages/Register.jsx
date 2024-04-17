@@ -23,9 +23,9 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const userDetails = {
-      fullName: data.fullName,
+      fullName: data.fullName.trim(),
       email: data.email,
-      username: data.username,
+      username: data.username.trim(),
       password: data.password,
     };
     try {
