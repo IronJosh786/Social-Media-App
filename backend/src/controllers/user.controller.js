@@ -78,7 +78,7 @@ const editData = z.object({
     .optional(),
   bio: z
     .string()
-    .max(100, { message: "Less than 100 characters allowed" })
+    .max(100, { message: "Maximum of 100 characters are allowed" })
     .optional(),
 });
 

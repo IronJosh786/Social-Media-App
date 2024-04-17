@@ -12,7 +12,7 @@ import jwt from "jsonwebtoken";
 
 const captionData = z
   .string()
-  .min(10, { message: "Atleast 10 characters are required" })
+  .min(1, { message: "Minimum of 1 character is required" })
   .max(200, { message: "Maximum of 200 characters are allowed" });
 
 const getAllPost = asyncHandler(async (req, res) => {

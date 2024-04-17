@@ -9,7 +9,7 @@ import { z } from "zod";
 
 const commentData = z
   .string()
-  .min(4, { message: "Minimum of 4 characters are required" })
+  .min(1, { message: "Minimum of 1 character is required" })
   .max(100, { message: "Maximum of 100 characters are allowed" });
 
 const getCommentLikeCount = asyncHandler(async (req, res) => {
