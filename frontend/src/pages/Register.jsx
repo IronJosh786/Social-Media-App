@@ -14,6 +14,8 @@ function Register() {
 
   const navigate = useNavigate();
 
+  axios.defaults.withCredentials = true;
+
   const handleChange = (e) => {
     setData({ ...data, [e.target.id]: e.target.value });
   };

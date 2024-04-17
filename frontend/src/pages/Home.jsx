@@ -13,6 +13,8 @@ function Home() {
   const [bio, setBio] = useState("");
   const { isLoggedIn } = useSelector((state) => state.user);
 
+  axios.defaults.withCredentials = true;
+
   const handleFileChange = (e) => {
     const files = e.target.files;
     const selected = [];
