@@ -19,6 +19,8 @@ import Search from "./components/Search.jsx";
 import Followers from "./components/Followers.jsx";
 import Followings from "./components/Followings.jsx";
 import PublicProfile from "./components/PublicProfile.jsx";
+import PreventAuth from "./components/PreventAuth.jsx";
+import NotFound from "./components/NotFound.jsx";
 
 function App() {
   return (
@@ -27,8 +29,10 @@ function App() {
       <Router>
         <Navbar />
         <Routes>
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<PreventAuth />}>
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+          </Route>
           <Route path="/" element={<Home />}>
             <Route path="/" element={<Posts />} />
             <Route path="/explore" element={<Explore />} />
@@ -43,6 +47,7 @@ function App() {
               <Route path="/bookmarks" element={<Bookmarks />} />
             </Route>
           </Route>
+          <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />
       </Router>
