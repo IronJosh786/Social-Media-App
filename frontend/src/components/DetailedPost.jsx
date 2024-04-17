@@ -167,7 +167,9 @@ function DetailedPost() {
 
   const handleDeletePost = async () => {
     try {
-      toggleBookmark(id);
+      if (isBookmarked) {
+        toggleBookmark(id);
+      }
       const response = await axios.delete(
         `${base}/api/v1/post/delete-post/${id}`
       );
