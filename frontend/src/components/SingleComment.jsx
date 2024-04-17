@@ -214,9 +214,7 @@ function SingleComment({ comment, id, parentFetch, postId, isAdmin }) {
             }`}
           >
             <button
-              onClick={() => {
-                toggleLike(comment._id);
-              }}
+              onClick={handleLikeClick}
               className="h-4 w-4 active:scale-90 transition all ease-in-out duration-200"
             >
               <svg
