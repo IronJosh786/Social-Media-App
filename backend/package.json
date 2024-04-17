@@ -7,8 +7,9 @@
   "scripts": {
     "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js",
     "start": "node src/index.js",
-    "build-frontend": "npm install --prefix frontend && npm run build --prefix frontend",
-    "build": "npm install && npm run build-frontend"
+    "build": "npm run build-client && npm run build-server",
+    "build-client": "npm --prefix ../frontend install ../frontend && npm --prefix ../frontend run build && cd -",
+    "build-server": "npm run build"
   },
   "keywords": [
     "MERN",
