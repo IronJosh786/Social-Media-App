@@ -14,7 +14,7 @@ app.use(
 
 app.set("trust proxy", 1);
 app.use(cookieParser());
-app.use(express.static("public"));
+// app.use(express.static("public"));
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 
@@ -32,12 +32,12 @@ app.use("/api/v1/comment", commentRouter);
 app.use("/api/v1/bookmark", bookmarkRouter);
 app.use("/api/v1/connection", connectionRouter);
 
-const __dirname = path.resolve();
+// const __dirname = path.resolve();
 
-app.use(express.static(path.join(__dirname, "../frontend/dist")));
+// app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
-});
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+// });
 
 export { app };
