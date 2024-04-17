@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
-import axios from "axios";
+import axios from "../axios.js";
 import { base } from "../baseUrl.js";
 import { useNavigate } from "react-router-dom";
 

@@ -3,7 +3,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleTheme } from "../features/themeSlice.js";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../axios.js";
 import { base } from "../baseUrl.js";
 import Cookies from "js-cookie";
 import { toast } from "sonner";

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import SingleCard from "./SingleCard.jsx";
 import { useSelector, useDispatch } from "react-redux";
-import axios from "axios";
+import axios from "../axios.js";
 import { base } from "../baseUrl.js";
 import { toast } from "sonner";
 import { setUserData } from "../features/userSlice.js";

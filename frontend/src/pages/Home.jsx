@@ -3,7 +3,7 @@ import Leftbar from "../components/Leftbar";
 import Rightbar from "../components/Rightbar";
 import { Outlet } from "react-router-dom";
 import { NavLink } from "react-router-dom";
-import axios from "axios";
+import axios from "../axios.js";
 import { base } from "../baseUrl.js";
 import { toast } from "sonner";
 import { useSelector } from "react-redux";

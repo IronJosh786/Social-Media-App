@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import axios from "axios";
+import axios from "../axios.js";
 import { toast } from "sonner";
 import { base } from "../baseUrl.js";
 import SingleUser from "./SingleUser.jsx";

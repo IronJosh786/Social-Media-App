@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { base } from "../baseUrl.js";
 import { toast } from "sonner";
-import axios from "axios";
+import axios from "../axios.js";
 import SingleCard from "./SingleCard.jsx";
 
 function Posts() {
