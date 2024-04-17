@@ -23,10 +23,10 @@ function NotFound() {
       <div className="hero-content text-center">
         <div className="max-w-md">
           <h1 className="text-5xl font-bold">Page Not Found (404)</h1>
-          <span className="countdown">
-            You will be back to home page in: {countdown}
+          <span className="countdown text-xl">
+            You will be back to home page in:{" "}
+            <span className="font-bold">{countdown}</span>
           </span>
-          <button className="btn btn-primary">Get Started</button>
         </div>
       </div>
     </div>
