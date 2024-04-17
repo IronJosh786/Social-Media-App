@@ -16,7 +16,7 @@ function NotFound() {
     }
 
     return () => clearInterval(timer);
-  }, [countdown, navigate]);
+  }, [countdown]);
 
   return (
     <div className="hero min-h-screen bg-base-200">
