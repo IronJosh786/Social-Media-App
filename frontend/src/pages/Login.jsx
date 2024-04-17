@@ -1,4 +1,4 @@
-import axios from "../axios.js";
+import axios, { setHeader } from "../axios.js";
 import { toast } from "sonner";
 import Cookies from "js-cookie";
 import React, { useState } from "react";
@@ -41,6 +41,7 @@ function Login() {
         expires: 1,
         path: "",
       });
+      setHeader(response.data.data.accessToken);
       navigate("/");
     } catch (error) {
       toast.error(error.response.data.message);

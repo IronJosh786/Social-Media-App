@@ -3,11 +3,16 @@ import Cookie from "js-cookie";
 
 const instance = axios.create();
 
-const accessToken = Cookie.get("access_token");
-console.log("access_token: ", accessToken);
+const setHeader = (access_token) => {
+  const accessToken = Cookie.get("access_token") || access_token;
+  console.log("access_token: ", accessToken);
+  if (accessToken) {
+    instance.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+  } else {
+    delete instance.defaults.headers.common["Authorization"];
+  }
+};
 
-if (accessToken) {
-  instance.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-}
+export { setHeader };
 
 export default instance;
