@@ -32,10 +32,46 @@ const getAllPost = asyncHandler(async (req, res) => {
 
   const allPosts = await Post.aggregate([
     {
+      $lookup: {
+        from: "users",
+        localField: "postedBy",
+        foreignField: "_id",
+        as: "userDetails",
+        pipeline: [
+          {
+            $project: {
+              _id: 1,
+              username: 1,
+              fullName: 1,
+              avatar: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $unwind: {
+        path: "$userDetails",
+      },
+    },
+    {
+      $lookup: {
+        from: "likes",
+        localField: "_id",
+        foreignField: "post",
+        as: "postLikes",
+      },
+    },
+    {
+      $addFields: {
+        totalLikesOnPost: {
+          $size: "$postLikes",
+        },
+      },
+    },
+    {
       $project: {
-        _id: 1,
-        postedBy: 1,
-        updatedAt: 1,
+        postLikes: 0,
       },
     },
     {
@@ -83,10 +119,46 @@ const getPostsOfFollowing = asyncHandler(async (req, res) => {
       },
     },
     {
+      $lookup: {
+        from: "users",
+        localField: "postedBy",
+        foreignField: "_id",
+        as: "userDetails",
+        pipeline: [
+          {
+            $project: {
+              _id: 1,
+              username: 1,
+              fullName: 1,
+              avatar: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $unwind: {
+        path: "$userDetails",
+      },
+    },
+    {
+      $lookup: {
+        from: "likes",
+        localField: "_id",
+        foreignField: "post",
+        as: "postLikes",
+      },
+    },
+    {
+      $addFields: {
+        totalLikesOnPost: {
+          $size: "$postLikes",
+        },
+      },
+    },
+    {
       $project: {
-        _id: 1,
-        postedBy: 1,
-        updatedAt: 1,
+        postLikes: 0,
       },
     },
     {
