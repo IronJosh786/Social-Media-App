@@ -13,13 +13,14 @@ function SingleCard({ postId }) {
     images: [],
     caption: "",
     totalLikeCount: 0,
-    commentsOnPost: [],
     postedBy: "",
   });
   const [isLiked, setIsLiked] = useState(false);
+
   const { isLoggedIn } = useSelector((state) => state.user);
-  const navigate = useNavigate();
+  const { posts } = useSelector((state) => state.data);
   const { darkMode } = useSelector((state) => state.theme);
+  const navigate = useNavigate();
 
   const getBackgroundImageStyle = () => {
     const strokeColor = darkMode
@@ -38,7 +39,7 @@ function SingleCard({ postId }) {
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {
-      fetchPost(id);
+      fetchIsLiked(id);
     }
   };
 
@@ -54,35 +55,33 @@ function SingleCard({ postId }) {
     toggleLike(postId);
   };
 
-  const fetchPost = async (id) => {
+  const fetchIsLiked = async (id) => {
     try {
-      const response = await axios.get(`${base}/api/v1/post/get-post/${id}`);
-      const { _id, images, caption, totalLikeCount, commentsOnPost, postedBy } =
-        response.data.data;
-      const { avatar, username } = response.data.data.ownerDetails[0];
-      setPost({
-        _id,
-        avatar,
-        username,
-        caption,
-        images,
-        totalLikeCount,
-        commentsOnPost,
-        postedBy,
-      });
-      if (isLoggedIn) {
-        const res = await axios.get(
-          `${base}/api/v1/like/is-document-liked/${id}`
-        );
-        setIsLiked(res.data.data);
-      }
+      const res = await axios.get(
+        `${base}/api/v1/like/is-document-liked/${id}`
+      );
+      setIsLiked(res.data.data);
     } catch (error) {
       toast.error(error.response.data.message);
     }
   };
 
   useEffect(() => {
-    fetchPost(postId);
+    const data = posts.find((post) => post._id === postId);
+    if (data) {
+      setPost({
+        _id: data._id,
+        avatar: data.userDetails.avatar,
+        username: data.userDetails.username,
+        images: data.images,
+        caption: data.caption,
+        totalLikeCount: data.totalLikesOnPost,
+        postedBy: data.postedBy,
+      });
+    }
+    if (isLoggedIn) {
+      fetchIsLiked(postId);
+    }
   }, []);
 
   return (
