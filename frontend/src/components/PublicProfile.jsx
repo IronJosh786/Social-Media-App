@@ -52,36 +52,52 @@ function PublicProfile() {
   };
 
   const follow = async () => {
-    if (!isLoggedIn) {
-      toast.error("Login required");
-      return;
-    }
     try {
       const response = await axios.post(
         `${base}/api/v1/connection/send-request/${id}`
       );
       toast.info(response.data.message);
-      fetchConnectionStatus();
     } catch (error) {
       toast.error(error.response.data.message);
+    } finally {
+      fetchConnectionStatus();
     }
   };
-  const unfollow = async () => {
+
+  const handleFollowClick = () => {
     if (!isLoggedIn) {
       toast.error("Login required");
       return;
     }
+    if (text === "Follow") {
+      setText("Pending");
+    }
+    follow();
+  };
+
+  const unfollow = async () => {
     try {
       const response = await axios.delete(
         `${base}/api/v1/connection/decline-request/${requestId}`
       );
       toast.success("Connection removed");
-      fetchConnectionStatus();
-      fetchData();
     } catch (error) {
       toast.error(error.response.data.message);
+    } finally {
+      fetchData();
+      fetchConnectionStatus();
     }
-    fetchConnectionStatus();
+  };
+
+  const handleUnFollowClick = () => {
+    if (!isLoggedIn) {
+      toast.error("Login required");
+      return;
+    }
+    if (text === "Unfollow") {
+      setText("Follow");
+    }
+    unfollow();
   };
 
   const fetchConnectionStatus = async () => {
@@ -154,7 +170,7 @@ function PublicProfile() {
           </p>
         </div>
         <button
-          onClick={connectionStatus ? unfollow : follow}
+          onClick={connectionStatus ? handleUnFollowClick : handleFollowClick}
           className={`btn btn-sm btn-outline mt-4`}
         >
           {text}
