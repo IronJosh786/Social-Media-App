@@ -96,9 +96,24 @@ Open your browser and navigate to http://localhost:5173 to view the application.
 Contributions are welcome! If you'd like to contribute to this project, please follow these steps:
 
 - Fork the repository
-- Create your feature branch (git checkout -b feature/YourFeature)
-- Commit your changes (git commit -am 'Add some feature')
-- Push to the branch (git push origin feature/YourFeature)
+- Create your feature branch
+
+```bash
+git checkout -b feature/YourFeature
+```
+
+- Commit your changes
+
+```bash
+git commit -am 'Add some feature'
+```
+
+- Push to the branch
+
+```bash
+git push origin feature/YourFeature
+```
+
 - Create a new Pull Request
 
 ## License
