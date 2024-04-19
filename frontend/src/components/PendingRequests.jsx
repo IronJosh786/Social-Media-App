@@ -43,8 +43,8 @@ function PendingRequests() {
       {isRequestPage && (
         <h3 className="py-4 text-xl font-bold">Pending Requests</h3>
       )}
-      <div className="flex flex-col gap-4">
-        {!requests.length && <div className="mt-4">No Request to show</div>}
+      <div className="flex flex-col gap-2 overflow-hidden">
+        {!requests.length && <div className="lg:px-2">No Request to show</div>}
         {requests.map((request) => (
           <SingleRequest
             key={request._id}

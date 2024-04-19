@@ -41,8 +41,10 @@ function Followers() {
       } ${darkMode ? "border-neutral-700" : "border-base-300"}`}
     >
       {isFollowerPage && <h3 className="py-4 text-xl font-bold">Followers</h3>}
-      <div className="flex flex-col gap-4">
-        {!followers.length && <div>No Follower to show</div>}
+      <div className="flex flex-col gap-2 overflow-hidden">
+        {!followers.length && (
+          <div className="lg:px-2">No Follower to show</div>
+        )}
         {followers.map((follower) => (
           <SingleConnection
             key={follower._id}

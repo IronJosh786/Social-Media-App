@@ -43,8 +43,10 @@ function Followings() {
       {isFollowingPage && (
         <h3 className="py-4 text-xl font-bold">Followings</h3>
       )}
-      <div className="flex flex-col gap-4">
-        {!followings.length && <div>No Following to show</div>}
+      <div className="flex flex-col gap-2 overflow-hidden">
+        {!followings.length && (
+          <div className="lg:px-2">No Following to show</div>
+        )}
         {followings.map((following) => (
           <SingleConnection
             key={following._id}

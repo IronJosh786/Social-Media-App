@@ -7,7 +7,7 @@ const initialState = {
   page: 1,
   allPosts: true,
   error: "",
-  loading: false,
+  loading: true,
 };
 
 export const fetchData = createAsyncThunk(

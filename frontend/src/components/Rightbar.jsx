@@ -15,7 +15,7 @@ function Rightbar() {
             <p>Requests</p>
             <i className="ri-arrow-down-s-line"></i>
           </div>
-          <div className="collapse-content">
+          <div className="collapse-content p-2 overflow-hidden">
             <PendingRequests />
           </div>
         </div>
@@ -27,7 +27,7 @@ function Rightbar() {
             <p>Followers</p>
             <i className="ri-arrow-down-s-line"></i>
           </div>
-          <div className="collapse-content">
+          <div className="collapse-content p-2 overflow-hidden">
             <Followers />
           </div>
         </div>
@@ -39,7 +39,7 @@ function Rightbar() {
             <p>Followings</p>
             <i className="ri-arrow-down-s-line"></i>
           </div>
-          <div className="collapse-content">
+          <div className="collapse-content p-2 overflow-hidden">
             <Followings />
           </div>
         </div>
