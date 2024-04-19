@@ -1,36 +1,31 @@
-import React, { useState, useEffect } from "react";
-import axios from "../axios.js";
-import { toast } from "sonner";
-import { base } from "../baseUrl.js";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import SingleConnection from "./SingleConnection.jsx";
 import { useLocation } from "react-router-dom";
+import { fetchFollowers } from "../features/connectionSlice.js";
+import { toast } from "sonner";
 
 function Followers() {
   const location = useLocation();
   const isFollowerPage = location.pathname.includes("/followers");
-  const [followers, setFollowers] = useState([]);
+
+  const { followers, followersError } = useSelector(
+    (state) => state.connection
+  );
   const { darkMode } = useSelector((state) => state.theme);
   const { isLoggedIn } = useSelector((state) => state.user);
 
-  const fetchFollowers = async () => {
-    try {
-      const response = await axios.get(
-        `${base}/api/v1/connection/get-followers`
-      );
-      if (response.data.message === "No followers") {
-        setFollowers([]);
-        return;
-      }
-      setFollowers(response.data.data);
-    } catch (error) {
-      toast.error(error.response.data.message);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (followersError) {
+      toast.error(followersError);
     }
-  };
+  }, [followersError]);
 
   useEffect(() => {
     if (isLoggedIn) {
-      fetchFollowers();
+      dispatch(fetchFollowers());
     }
   }, []);
 

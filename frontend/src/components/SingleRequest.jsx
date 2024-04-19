@@ -2,14 +2,17 @@ import React from "react";
 import axios from "../axios.js";
 import { toast } from "sonner";
 import { base } from "../baseUrl.js";
+import { fetchFollowers, fetchRequests } from "../features/connectionSlice.js";
+import { useDispatch } from "react-redux";
 
-function SingleRequest({ details, requestId, fetchRequests }) {
+function SingleRequest({ details, requestId }) {
+  const dispatch = useDispatch();
+
   const acceptRequest = async (id) => {
     try {
-      const response = await axios.patch(
-        `${base}/api/v1/connection/accept-request/${id}`
-      );
-      fetchRequests();
+      await axios.patch(`${base}/api/v1/connection/accept-request/${id}`);
+      dispatch(fetchRequests());
+      dispatch(fetchFollowers());
       toast.success("Accepted the request");
     } catch (error) {
       toast.error(error.response.data.message);
@@ -18,10 +21,8 @@ function SingleRequest({ details, requestId, fetchRequests }) {
 
   const declineRequest = async (id) => {
     try {
-      const response = await axios.delete(
-        `${base}/api/v1/connection/decline-request/${id}`
-      );
-      fetchRequests();
+      await axios.delete(`${base}/api/v1/connection/decline-request/${id}`);
+      dispatch(fetchRequests());
       toast.success("Declined the request");
     } catch (error) {
       toast.error(error.response.data.message);

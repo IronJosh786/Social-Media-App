@@ -1,36 +1,29 @@
-import React, { useState, useEffect } from "react";
-import axios from "../axios.js";
-import { toast } from "sonner";
-import { base } from "../baseUrl.js";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import SingleRequest from "./SingleRequest.jsx";
 import { useLocation } from "react-router-dom";
+import { fetchRequests } from "../features/connectionSlice.js";
+import { toast } from "sonner";
 
 function PendingRequests() {
   const location = useLocation();
   const isRequestPage = location.pathname.includes("/pending-requests");
-  const [requests, setRequests] = useState([]);
+
+  const { requests, requestError } = useSelector((state) => state.connection);
   const { darkMode } = useSelector((state) => state.theme);
   const { isLoggedIn } = useSelector((state) => state.user);
 
-  const fetchRequests = async () => {
-    try {
-      const response = await axios.get(
-        `${base}/api/v1/connection/get-pending-requests`
-      );
-      if (response.data.message === "No pending requests") {
-        setRequests([]);
-        return;
-      }
-      setRequests(response.data.data);
-    } catch (error) {
-      toast.error(error.response.data.message);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (requestError) {
+      toast.error(requestError);
     }
-  };
+  }, [requestError]);
 
   useEffect(() => {
     if (isLoggedIn) {
-      fetchRequests();
+      dispatch(fetchRequests());
     }
   }, []);
 
@@ -50,7 +43,6 @@ function PendingRequests() {
             key={request._id}
             details={request.requestorDetails[0]}
             requestId={request._id}
-            fetchRequests={fetchRequests}
           />
         ))}
       </div>

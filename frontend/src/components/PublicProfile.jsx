@@ -1,10 +1,11 @@
 import axios from "../axios.js";
 import { toast } from "sonner";
 import { base } from "../baseUrl.js";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import React, { useEffect, useState } from "react";
-import { NavLink, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import SingleCard from "./SingleCard.jsx";
+import { fetchFollowings } from "../features/connectionSlice.js";
 
 function PublicProfile() {
   const { id } = useParams();
@@ -21,9 +22,12 @@ function PublicProfile() {
   const [connectionStatus, setConnectionStatus] = useState(false);
   const [text, setText] = useState("Follow");
   const [requestId, setRequestId] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { isLoggedIn } = useSelector((state) => state.user);
   const { darkMode } = useSelector((state) => state.theme);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const fetchData = async () => {
     try {
@@ -48,7 +52,10 @@ function PublicProfile() {
         followings,
       });
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.response.data.message);
+      if (error.response.status === 404) {
+        navigate("/not-found");
+      }
     } finally {
       setLoading(false);
     }
@@ -80,10 +87,11 @@ function PublicProfile() {
 
   const unfollow = async () => {
     try {
-      const response = await axios.delete(
+      await axios.delete(
         `${base}/api/v1/connection/decline-request/${requestId}`
       );
       toast.success("Connection removed");
+      dispatch(fetchFollowings());
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {

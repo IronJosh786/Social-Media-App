@@ -68,7 +68,10 @@ function DetailedPost() {
         }
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.message);
+      if (error.response.status === 404) {
+        navigate("/not-found");
+      }
     } finally {
       setLoading(false);
     }

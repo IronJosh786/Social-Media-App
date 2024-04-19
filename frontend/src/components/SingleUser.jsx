@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "../axios.js";
 import { toast } from "sonner";
 import { base } from "../baseUrl.js";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { fetchFollowings } from "../features/connectionSlice.js";
 
 function SingleUser({ user }) {
   const [connectionStatus, setConnectionStatus] = useState(false);
@@ -12,6 +13,7 @@ function SingleUser({ user }) {
   const [loading, setLoading] = useState(false);
   const { isLoggedIn } = useSelector((state) => state.user);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const follow = async () => {
     try {
@@ -43,6 +45,7 @@ function SingleUser({ user }) {
         `${base}/api/v1/connection/decline-request/${requestId}`
       );
       toast.success("Connection removed");
+      dispatch(fetchFollowings());
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {
@@ -99,7 +102,7 @@ function SingleUser({ user }) {
   return (
     <>
       {loading ? (
-        <div className="skeleton p-4 max-w-80 h-52"></div>
+        <div className="skeleton p-4 w-80 h-52"></div>
       ) : (
         <div className="glass flex flex-col p-4 bg-base-300 max-w-[400px] w-full rounded-box items-center text-center">
           <div className="flex gap-4 items-center">

@@ -11,7 +11,7 @@ function Profile() {
   const { darkMode } = useSelector((state) => state.theme);
   const dispatch = useDispatch();
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [userDetails, setUserDetails] = useState({
     username: "",
     email: "",

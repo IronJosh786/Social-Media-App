@@ -21,6 +21,7 @@ function Navbar() {
   const isLoginPage = location.pathname.includes("/login");
   const isRegisterPage = location.pathname.includes("/register");
   const [profilePicture, setProfilePicture] = useState(null);
+  const [isActive, setIsActive] = useState(false);
 
   const changeTheme = () => {
     dispatch(toggleTheme());
@@ -73,6 +74,12 @@ function Navbar() {
   };
 
   useEffect(() => {
+    window.addEventListener("scroll", () => {
+      window.scrollY > 60 ? setIsActive(true) : setIsActive(false);
+    });
+  });
+
+  useEffect(() => {
     checkAuthenticationStatus();
     const intervalId = setInterval(checkAuthenticationStatus, 5 * 60 * 1000);
     if (isLoggedIn) {
@@ -82,7 +89,11 @@ function Navbar() {
   }, [userData, isLoggedIn]);
 
   return (
-    <div className="navbar bg-base-100 ">
+    <div
+      className={`navbar bg-base-100 sticky top-0 z-10 ${
+        isActive ? "drop-shadow-md" : ""
+      }`}
+    >
       <div className="navbar-start">
         <NavLink to={"/"}>
           <svg
