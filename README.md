@@ -6,6 +6,10 @@ This is a social media web application built using the MERN (MongoDB, Express.js
 
 Check out the live demo of the Social Media Web Application: [Live Demo](https://frontend-production-391c.up.railway.app/)
 
+## Code Optimization
+
+For an optimized version of the codebase, you can check out the `redux-data-fetch-refactor` branch. It contains code refinements and improvements. Additionally, it is the branch that is currently deployed for the live demo.
+
 ## Features
 
 - **User Authentication:** Users can sign up, log in, and log out securely.
