@@ -2,15 +2,18 @@ import React, { useEffect, useState } from "react";
 import axios from "../axios.js";
 import { toast } from "sonner";
 import { base } from "../baseUrl.js";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { fetchFollowings } from "../features/connectionSlice.js";
 
 function SingleUser({ user }) {
   const [connectionStatus, setConnectionStatus] = useState(false);
   const [text, setText] = useState("Follow");
   const [requestId, setRequestId] = useState("");
+  const [loading, setLoading] = useState(false);
   const { isLoggedIn } = useSelector((state) => state.user);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const follow = async () => {
     try {
@@ -42,6 +45,7 @@ function SingleUser({ user }) {
         `${base}/api/v1/connection/decline-request/${requestId}`
       );
       toast.success("Connection removed");
+      dispatch(fetchFollowings());
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {
@@ -83,42 +87,53 @@ function SingleUser({ user }) {
       }
     } catch (error) {
       toast.error(error.response.data.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     if (isLoggedIn) {
+      setLoading(true);
       fetchConnectionStatus();
     }
   }, []);
 
   return (
-    <div className="glass flex flex-col p-4 bg-base-300 max-w-[400px] w-full rounded-box items-center text-center">
-      <div className="flex gap-4 items-center">
-        <img
-          className="h-16 w-16 object-cover rounded-full"
-          src={user.avatar}
-          alt="avatar"
-        />
-      </div>
-      <p className="uppercase mt-4">{user.fullName}</p>
-      <p className="font-semibold mt-2">@{user.username}</p>
-      <p className="mt-4">{user.bio}</p>
-      <div className="flex gap-4 mt-8">
-        <button
-          onClick={connectionStatus ? handleUnFollowClick : handleFollowClick}
-          className={`btn btn-sm btn-outline`}
-        >
-          {text}
-        </button>
-        <button
-          onClick={() => navigate(`/user-profile/${user._id}`)}
-          className="btn btn-sm btn-primary"
-        >
-          Profile
-        </button>
-      </div>
-    </div>
+    <>
+      {loading ? (
+        <div className="skeleton p-4 w-80 h-52"></div>
+      ) : (
+        <div className="glass flex flex-col p-4 bg-base-300 max-w-[400px] w-full rounded-box items-center text-center">
+          <div className="flex gap-4 items-center">
+            <img
+              className="h-16 w-16 object-cover rounded-full"
+              src={user.avatar}
+              alt="avatar"
+            />
+          </div>
+          <p className="uppercase mt-4">{user.fullName}</p>
+          <p className="font-semibold mt-2">@{user.username}</p>
+          <p className="mt-4">{user.bio}</p>
+          <div className="flex gap-4 mt-8">
+            <button
+              onClick={
+                connectionStatus ? handleUnFollowClick : handleFollowClick
+              }
+              className={`btn btn-sm btn-outline`}
+            >
+              {text}
+            </button>
+            <button
+              onClick={() => navigate(`/user-profile/${user._id}`)}
+              className="btn btn-sm btn-primary"
+            >
+              Profile
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 

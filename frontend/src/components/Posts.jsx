@@ -1,46 +1,36 @@
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { base } from "../baseUrl.js";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { toast } from "sonner";
-import axios from "../axios.js";
 import SingleCard from "./SingleCard.jsx";
+import {
+  fetchData,
+  fetchFollowingsData,
+  setPage,
+  setAllPosts,
+} from "../features/dataSlice.js";
 
 function Posts() {
+  const limit = 10;
+  const { posts } = useSelector((state) => state.data);
+  const { page } = useSelector((state) => state.data);
+  const { allPosts } = useSelector((state) => state.data);
+  const { error } = useSelector((state) => state.data);
+  const { isLoggedIn } = useSelector((state) => state.user);
   const { darkMode } = useSelector((state) => state.theme);
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
-  const [posts, setPosts] = useState([]);
-  const [all, setAll] = useState(true);
-  const [followings, setFollowings] = useState(false);
+  const dispatch = useDispatch();
 
-  const fetchPosts = async () => {
-    try {
-      const response = await axios.get(
-        `${base}/api/v1/post/get-all-posts?page=${page}&limit=${limit}`
-      );
-      setPosts(response.data.data);
-    } catch (error) {
-      toast.error(error.response.data.message);
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
     }
-  };
-
-  const fetchFollowingsPost = async () => {
-    try {
-      const response = await axios.get(
-        `${base}/api/v1/post/get-followings-post?page=${page}&limit=${limit}`
-      );
-      setPosts(response.data.data);
-    } catch (error) {
-      toast.error(error.response.data.message);
-    }
-  };
+  }, [error]);
 
   const incrementPage = async () => {
     if (!posts.length || posts.length < 10) {
       toast.error("No more posts to fetch");
       return;
     }
-    setPage((prev) => prev + 1);
+    dispatch(setPage(page + 1));
   };
 
   const decrementPage = async () => {
@@ -48,34 +38,34 @@ function Posts() {
       toast.error("This is the start of posts");
       return;
     }
-    setPage((prev) => prev - 1);
+    dispatch(setPage(page - 1));
   };
 
   const handleAllClick = () => {
-    const page = 1;
-    setPage(page);
-    setAll(true);
-    setFollowings(false);
+    dispatch(setPage(1));
+    dispatch(setAllPosts(true));
   };
 
   const handleFollowingsClick = () => {
-    const page = 1;
-    setPage(page);
-    setAll(false);
-    setFollowings(true);
+    if (!isLoggedIn) {
+      toast.error("Login required");
+      return;
+    }
+    dispatch(setPage(1));
+    dispatch(setAllPosts(false));
   };
 
   useEffect(() => {
-    if (all) {
-      fetchPosts();
+    if (allPosts) {
+      dispatch(fetchData({ page, limit }));
     } else {
-      fetchFollowingsPost();
+      dispatch(fetchFollowingsData({ page, limit }));
     }
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
-  }, [page, all]);
+  }, [page, allPosts]);
 
   return (
     <div
@@ -86,21 +76,22 @@ function Posts() {
       <div className="flex justify-between w-full">
         <button
           onClick={handleAllClick}
-          className={`btn grow w-1/2 ${all ? "bg-base-300" : ""}`}
+          className={`btn grow w-1/2 ${allPosts ? "bg-base-300" : ""}`}
         >
           All
         </button>
         <button
           onClick={handleFollowingsClick}
-          className={`btn grow w-1/2 ${followings ? "bg-base-300" : ""}`}
+          className={`btn grow w-1/2 ${!allPosts ? "bg-base-300" : ""}`}
         >
           Followings
         </button>
       </div>
-      {!posts.length && <p className="p-4 text-center">No Post to show</p>}
-      {posts.map((post) => (
-        <SingleCard key={post._id} postId={post._id} />
-      ))}
+      {posts && !posts.length && (
+        <p className="p-4 text-center">No Post to show</p>
+      )}
+      {posts &&
+        posts.map((post) => <SingleCard key={post._id} postId={post._id} />)}
       <div className="flex justify-center my-2">
         <div className="join drop-shadow-md">
           <button onClick={decrementPage} className="join-item btn btn-sm">

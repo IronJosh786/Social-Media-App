@@ -12,9 +12,11 @@ function SingleConnection({ details, id }) {
           alt="avatar"
           className="h-12 w-12 object-cover rounded-full"
         />
-        <div className="text-left lg:text-center xl:text-left">
-          <p className="uppercase">{details.fullName}</p>
-          <p className="font-medium text-sm">@{details.username}</p>
+        <div className="text-left lg:text-center xl:text-left overflow-hidden">
+          <p className="uppercase overflow-hidden">{details.fullName}</p>
+          <p className="font-semibold text-sm overflow-ellipsis">
+            @{details.username}
+          </p>
         </div>
       </div>
       <button

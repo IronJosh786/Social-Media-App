@@ -1,36 +1,30 @@
-import React, { useState, useEffect } from "react";
-import axios from "../axios.js";
-import { toast } from "sonner";
-import { base } from "../baseUrl.js";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import SingleConnection from "./SingleConnection.jsx";
 import { useLocation } from "react-router-dom";
+import { fetchFollowings } from "../features/connectionSlice.js";
 
 function Followings() {
   const location = useLocation();
   const isFollowingPage = location.pathname.includes("/followings");
-  const [followings, setFollowings] = useState([]);
+
+  const { followings, followingsError } = useSelector(
+    (state) => state.connection
+  );
   const { darkMode } = useSelector((state) => state.theme);
   const { isLoggedIn } = useSelector((state) => state.user);
 
-  const fetchFollowings = async () => {
-    try {
-      const response = await axios.get(
-        `${base}/api/v1/connection/get-following`
-      );
-      if (response.data.message === "No followings") {
-        setFollowings([]);
-        return;
-      }
-      setFollowings(response.data.data);
-    } catch (error) {
-      toast.error(error.response.data.message);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (followingsError) {
+      toast.error(followingsError);
     }
-  };
+  }, [followingsError]);
 
   useEffect(() => {
     if (isLoggedIn) {
-      fetchFollowings();
+      dispatch(fetchFollowings());
     }
   }, []);
 
@@ -43,8 +37,10 @@ function Followings() {
       {isFollowingPage && (
         <h3 className="py-4 text-xl font-bold">Followings</h3>
       )}
-      <div className="flex flex-col gap-4">
-        {!followings.length && <div>No Following to show</div>}
+      <div className="flex flex-col gap-2 overflow-hidden">
+        {!followings.length && (
+          <div className="lg:px-2">No Following to show</div>
+        )}
         {followings.map((following) => (
           <SingleConnection
             key={following._id}

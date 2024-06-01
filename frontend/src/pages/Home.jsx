@@ -6,12 +6,16 @@ import { NavLink } from "react-router-dom";
 import axios from "../axios.js";
 import { base } from "../baseUrl.js";
 import { toast } from "sonner";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchData, setAllPosts } from "../features/dataSlice.js";
 
 function Home() {
   const [selectedImages, setSelectedImages] = useState([]);
   const [bio, setBio] = useState("");
   const { isLoggedIn } = useSelector((state) => state.user);
+  const { page } = useSelector((state) => state.data);
+
+  const dispatch = useDispatch();
 
   axios.defaults.withCredentials = true;
 
@@ -50,7 +54,9 @@ function Home() {
         formData
       );
       toast.success("Published a new post");
-      window.location.reload();
+      dispatch(setAllPosts(true));
+      const limit = 10;
+      dispatch(fetchData({ page, limit }));
       setBio("");
       setSelectedImages([]);
     } catch (error) {

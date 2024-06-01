@@ -11,7 +11,7 @@ function Leftbar() {
 
   return (
     <div className="hidden lg:block lg:col-span-3 p-4">
-      <ul className="menu bg-base-200 rounded-box p-0 flex flex-col gap-4">
+      <ul className="menu bg-base-200 rounded-box p-0 flex flex-col gap-4 sticky top-20">
         <li>
           <NavLink to={"/"}>
             <svg
