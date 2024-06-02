@@ -1,5 +1,5 @@
 export const setLocalStorage = (key, value) => {
-  const time = Date.now() + 24 * 60 * 60 * 1000;
+  const time = value ? Date.now() + 24 * 60 * 60 * 1000 : 0;
   const item = {
     value: value,
     expiresIn: time,

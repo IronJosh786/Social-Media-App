@@ -5,7 +5,6 @@ import { toggleTheme } from "../features/themeSlice.js";
 import { useNavigate } from "react-router-dom";
 import axios, { setHeader } from "../axios.js";
 import { base } from "../baseUrl.js";
-import Cookie from "js-cookie";
 import { toast } from "sonner";
 import { setUserData, toggleLoggedIn } from "../features/userSlice.js";
 import { getLocalStorage } from "../localStorage.js";
@@ -66,7 +65,13 @@ function Navbar() {
   const checkAuthenticationStatus = () => {
     const token = getLocalStorage("isLoggedIn");
     if (!token) {
+      Cookies.remove("access_token");
+      dispatch(setUserData(null));
+      setProfilePicture(
+        "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+      );
       dispatch(toggleLoggedIn(false));
+      setHeader("");
     }
     if (token) {
       setHeader(Cookies.get("access_token"));
