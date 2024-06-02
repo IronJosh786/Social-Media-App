@@ -20,7 +20,6 @@ function SingleCard({ postId }) {
 
   const { isLoggedIn } = useSelector((state) => state.user);
   const { posts } = useSelector((state) => state.data);
-  const { loading } = useSelector((state) => state.data);
   const { darkMode } = useSelector((state) => state.theme);
   const navigate = useNavigate();
 
@@ -115,7 +114,7 @@ function SingleCard({ postId }) {
 
   return (
     <>
-      {loading || localLoad ? (
+      {localLoad ? (
         <div className="col-span-12 lg:col-span-6 flex flex-col gap-4 w-full p-4">
           <div className="skeleton h-72 w-full"></div>
           <div className="skeleton h-4 w-28"></div>
