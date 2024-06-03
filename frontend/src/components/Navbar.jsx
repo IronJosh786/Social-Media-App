@@ -73,10 +73,15 @@ function Navbar() {
     console.log("auth check");
     const currTime = Date.now();
     const localStorageItem = JSON.parse(localStorage.getItem("isLoggedIn"));
-    const expirationTime = localStorageItem.expiresIn;
+    const expirationTime = localStorageItem?.expiresIn;
 
     if (currTime > expirationTime) {
       removeLoginAccess();
+    }
+
+    if (!isLoggedIn) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
     }
   };
 
