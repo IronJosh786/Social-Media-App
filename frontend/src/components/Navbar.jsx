@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleTheme } from "../features/themeSlice.js";
 import { useNavigate } from "react-router-dom";
-import axios, { setHeader } from "../axios.js";
+import axios from "../axios.js";
 import { base } from "../baseUrl.js";
 import { toast } from "sonner";
 import { setUserData, toggleLoggedIn } from "../features/userSlice.js";
-import { getLocalStorage } from "../localStorage.js";
 import Cookies from "js-cookie";
+import { setAllPosts } from "../features/dataSlice.js";
 
 function Navbar() {
   const dispatch = useDispatch();
@@ -21,6 +21,7 @@ function Navbar() {
   const isRegisterPage = location.pathname.includes("/register");
   const [profilePicture, setProfilePicture] = useState(null);
   const [isActive, setIsActive] = useState(false);
+  const intervalRef = useRef(null);
 
   const changeTheme = () => {
     dispatch(toggleTheme());
@@ -63,16 +64,20 @@ function Navbar() {
   };
 
   const checkAuthenticationStatus = () => {
-    const token = Cookies.get("access_token");
-    if (!token) {
+    const currTime = Date.now();
+    const localStorageItem = JSON.parse(localStorage.getItem("isLoggedIn"));
+    const expirationTime = localStorageItem.expiresIn;
+
+    if (currTime > expirationTime) {
       navigate("/");
+      dispatch(setAllPosts(true));
       dispatch(setUserData(null));
+      Cookies.remove("access_token");
       dispatch(toggleLoggedIn(false));
       setProfilePicture(
         "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
       );
-    } else {
-      setHeader(Cookies.get("access_token"));
+      clearInterval(intervalRef.current);
     }
   };
 
@@ -84,11 +89,11 @@ function Navbar() {
 
   useEffect(() => {
     checkAuthenticationStatus();
-    const intervalId = setInterval(checkAuthenticationStatus, 5 * 60 * 1000);
+    intervalRef.current = setInterval(checkAuthenticationStatus, 1000);
     if (isLoggedIn) {
       fetching();
     }
-    return () => clearInterval(intervalId);
+    return () => clearInterval(intervalRef.current);
   }, [userData, isLoggedIn]);
 
   return (
