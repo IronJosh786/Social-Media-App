@@ -1,27 +1,27 @@
-import React, { useEffect, useState, useRef } from "react";
-import { NavLink, useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { toggleTheme } from "../features/themeSlice.js";
-import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import Cookies from "js-cookie";
 import axios from "../axios.js";
 import { base } from "../baseUrl.js";
-import { toast } from "sonner";
-import { setUserData, toggleLoggedIn } from "../features/userSlice.js";
-import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 import { setAllPosts } from "../features/dataSlice.js";
+import { useDispatch, useSelector } from "react-redux";
+import { NavLink, useLocation } from "react-router-dom";
+import { toggleTheme } from "../features/themeSlice.js";
+import React, { useEffect, useState, useRef } from "react";
+import { setUserData, toggleLoggedIn } from "../features/userSlice.js";
 
 function Navbar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { darkMode } = useSelector((state) => state.theme);
+  const intervalRef = useRef(null);
+  const [isActive, setIsActive] = useState(false);
   const { userData } = useSelector((state) => state.user);
+  const { darkMode } = useSelector((state) => state.theme);
   const { isLoggedIn } = useSelector((state) => state.user);
+  const [profilePicture, setProfilePicture] = useState(null);
   const isLoginPage = location.pathname.includes("/login");
   const isRegisterPage = location.pathname.includes("/register");
-  const [profilePicture, setProfilePicture] = useState(null);
-  const [isActive, setIsActive] = useState(false);
-  const intervalRef = useRef(null);
 
   const changeTheme = () => {
     dispatch(toggleTheme());
@@ -38,17 +38,23 @@ function Navbar() {
 
   axios.defaults.withCredentials = true;
 
+  const removeLoginAccess = () => {
+    navigate("/");
+    dispatch(setAllPosts(true));
+    dispatch(setUserData(null));
+    Cookies.remove("access_token");
+    dispatch(toggleLoggedIn(false));
+    clearInterval(intervalRef.current);
+    setProfilePicture(
+      "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+    );
+  };
+
   const logout = async () => {
     try {
       const response = await axios.post(`${base}/api/v1/users/logout`);
       toast.success(response.data.message);
-      navigate("/");
-      Cookies.remove("access_token");
-      dispatch(setUserData(null));
-      dispatch(toggleLoggedIn(false));
-      setProfilePicture(
-        "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
-      );
+      removeLoginAccess();
     } catch (error) {
       toast.error(error.response.data.message);
     }
@@ -64,20 +70,13 @@ function Navbar() {
   };
 
   const checkAuthenticationStatus = () => {
+    console.log("auth check");
     const currTime = Date.now();
     const localStorageItem = JSON.parse(localStorage.getItem("isLoggedIn"));
     const expirationTime = localStorageItem.expiresIn;
 
     if (currTime > expirationTime) {
-      navigate("/");
-      dispatch(setAllPosts(true));
-      dispatch(setUserData(null));
-      Cookies.remove("access_token");
-      dispatch(toggleLoggedIn(false));
-      setProfilePicture(
-        "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
-      );
-      clearInterval(intervalRef.current);
+      removeLoginAccess();
     }
   };
 
