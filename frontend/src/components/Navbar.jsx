@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import Cookies from "js-cookie";
-import axios from "../axios.js";
+import axios, { setHeader } from "../axios.js";
 import { base } from "../baseUrl.js";
 import { useNavigate } from "react-router-dom";
 import { setAllPosts } from "../features/dataSlice.js";
@@ -81,6 +81,8 @@ function Navbar() {
 
     if (currTime > expirationTime) {
       removeLoginAccess();
+    } else {
+      setHeader(Cookies.get("access_token"));
     }
 
     if (!isLoggedIn) {
