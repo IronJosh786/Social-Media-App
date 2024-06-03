@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import SingleConnection from "./SingleConnection.jsx";
 import { useLocation } from "react-router-dom";
 import { fetchFollowings } from "../features/connectionSlice.js";
+import { toast } from "sonner";
 
 function Followings() {
   const location = useLocation();
