@@ -42,7 +42,11 @@ function Navbar() {
     navigate("/");
     dispatch(setAllPosts(true));
     dispatch(setUserData(null));
-    Cookies.remove("access_token");
+    Cookies.remove("access_token", {
+      path: "/",
+      secure: true,
+      sameSite: "none",
+    });
     dispatch(toggleLoggedIn(false));
     clearInterval(intervalRef.current);
     setProfilePicture(
