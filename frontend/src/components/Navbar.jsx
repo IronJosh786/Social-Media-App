@@ -44,10 +44,10 @@ function Navbar() {
       navigate("/");
       Cookies.remove("access_token");
       dispatch(setUserData(null));
+      dispatch(toggleLoggedIn(false));
       setProfilePicture(
         "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
       );
-      dispatch(toggleLoggedIn(false));
     } catch (error) {
       toast.error(error.response.data.message);
     }
@@ -63,17 +63,15 @@ function Navbar() {
   };
 
   const checkAuthenticationStatus = () => {
-    const token = getLocalStorage("isLoggedIn");
+    const token = Cookies.get("access_token");
     if (!token) {
-      Cookies.remove("access_token");
+      navigate("/");
       dispatch(setUserData(null));
+      dispatch(toggleLoggedIn(false));
       setProfilePicture(
         "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
       );
-      dispatch(toggleLoggedIn(false));
-      setHeader("");
-    }
-    if (token) {
+    } else {
       setHeader(Cookies.get("access_token"));
     }
   };

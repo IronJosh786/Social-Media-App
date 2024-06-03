@@ -10,16 +10,16 @@ export const setLocalStorage = (key, value) => {
 export const getLocalStorage = (key) => {
   let storedItem = localStorage.getItem(key) || "";
   if (!storedItem) {
-    return null;
+    return false;
   }
   storedItem = JSON.parse(storedItem);
   if (!storedItem.value) {
-    return null;
+    return false;
   }
   const time = Date.now();
   if (storedItem.expiresIn < time) {
     setLocalStorage("isLoggedIn", false);
-    return null;
+    return false;
   }
   return storedItem.value;
 };

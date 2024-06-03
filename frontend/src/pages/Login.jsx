@@ -39,7 +39,6 @@ function Login() {
       dispatch(setUserData(response.data.data.avatar));
       Cookies.set("access_token", response.data.data.accessToken, {
         expires: 1,
-        path: "",
       });
       setHeader(response.data.data.accessToken);
       navigate("/");
