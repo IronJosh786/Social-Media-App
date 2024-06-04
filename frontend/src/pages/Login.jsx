@@ -38,8 +38,8 @@ function Login() {
       dispatch(toggleLoggedIn(true));
       dispatch(setUserData(response.data.data.avatar));
       Cookies.set("access_token", response.data.data.accessToken, {
-        expires: 1 / 1440,
         path: "/",
+        expires: 7,
         secure: true,
         sameSite: "none",
       });

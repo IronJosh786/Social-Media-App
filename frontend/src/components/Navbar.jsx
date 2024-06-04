@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 import Cookies from "js-cookie";
-import axios, { setHeader } from "../axios.js";
 import { base } from "../baseUrl.js";
+import axios, { setHeader } from "../axios.js";
 import { useNavigate } from "react-router-dom";
 import { setAllPosts } from "../features/dataSlice.js";
 import { useDispatch, useSelector } from "react-redux";
@@ -74,7 +74,6 @@ function Navbar() {
   };
 
   const checkAuthenticationStatus = () => {
-    console.log("auth check");
     const currTime = Date.now();
     const localStorageItem = JSON.parse(localStorage.getItem("isLoggedIn"));
     const expirationTime = localStorageItem?.expiresIn;
@@ -99,7 +98,10 @@ function Navbar() {
 
   useEffect(() => {
     checkAuthenticationStatus();
-    intervalRef.current = setInterval(checkAuthenticationStatus, 1000);
+    intervalRef.current = setInterval(
+      checkAuthenticationStatus,
+      60 * 60 * 1000
+    );
     if (isLoggedIn) {
       fetching();
     }
