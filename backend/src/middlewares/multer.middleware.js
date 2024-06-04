@@ -1,9 +1,12 @@
 import multer from "multer";
 import path from "path";
 
+const storagePath =
+  process.env.NODE_ENV === "production" ? "/tmp" : "./public/temp";
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./public/temp");
+    cb(null, storagePath);
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
