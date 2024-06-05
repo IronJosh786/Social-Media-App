@@ -39,11 +39,11 @@ function Login() {
       dispatch(setUserData(response.data.data.avatar));
       Cookies.set("access_token", response.data.data.accessToken, {
         path: "/",
-        expires: 7,
+        expires: 1,
         secure: true,
         sameSite: "none",
       });
-      setHeader(response.data.data.accessToken);
+      // setHeader(response.data.data.accessToken);
       navigate("/");
     } catch (error) {
       toast.error(error.response.data.message);

@@ -3,15 +3,19 @@ import Cookies from "js-cookie";
 
 const instance = axios.create();
 
-const setHeader = (access_token) => {
-  const accessToken = Cookies.get("access_token") || access_token;
-  if (accessToken) {
-    instance.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-  } else {
-    delete instance.defaults.headers.common["Authorization"];
+const setHeader = (config, access_token = Cookies.get("access_token")) => {
+  if (access_token) {
+    config.headers.Authorization = `Bearer ${access_token}`;
   }
 };
 
-export { setHeader };
+instance.interceptors.request.use(
+  (config) => {
+    setHeader(config);
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
+export { setHeader };
 export default instance;

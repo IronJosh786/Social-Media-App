@@ -39,7 +39,6 @@ function Navbar() {
   axios.defaults.withCredentials = true;
 
   const removeLoginAccess = () => {
-    navigate("/");
     dispatch(setAllPosts(true));
     dispatch(setUserData(null));
     Cookies.remove("access_token", {
@@ -74,19 +73,23 @@ function Navbar() {
   };
 
   const checkAuthenticationStatus = () => {
+    console.log("check");
     const currTime = Date.now();
     const localStorageItem = JSON.parse(localStorage.getItem("isLoggedIn"));
     const expirationTime = localStorageItem?.expiresIn;
 
     if (currTime > expirationTime) {
       removeLoginAccess();
-    } else {
-      setHeader(Cookies.get("access_token"));
     }
+    // else {
+    //   setHeader(Cookies.get("access_token"));
+    // }
 
-    if (!isLoggedIn) {
+    if (!isLoggedIn && intervalRef.current !== null) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
+      console.log("cleared");
+      navigate(0);
     }
   };
 
@@ -98,15 +101,12 @@ function Navbar() {
 
   useEffect(() => {
     checkAuthenticationStatus();
-    intervalRef.current = setInterval(
-      checkAuthenticationStatus,
-      60 * 60 * 1000
-    );
     if (isLoggedIn) {
+      intervalRef.current = setInterval(checkAuthenticationStatus, 60 * 1000);
       fetching();
     }
     return () => clearInterval(intervalRef.current);
-  }, [userData, isLoggedIn]);
+  }, [isLoggedIn]);
 
   return (
     <div
