@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { base } from "../baseUrl.js";
 import { toast } from "sonner";
@@ -128,21 +128,23 @@ function SingleCard({ postId }) {
             darkMode ? "border-neutral-700" : "border-base-300"
           }`}
         >
-          <div className="flex gap-4 items-center">
+          <Link
+            to={`/user-profile/${post.postedBy}`}
+            className="flex gap-4 items-center"
+          >
             <div>
-              <img
-                className="h-10 w-10 rounded-full object-cover"
-                src={post.avatar}
-                alt="avatar"
-              />
+              {post.avatar ? (
+                <img
+                  className="h-10 w-10 rounded-full object-cover"
+                  src={post.avatar}
+                  alt="avatar"
+                />
+              ) : (
+                <div className="skeleton w-10 h-10 rounded-full shrink-0"></div>
+              )}
             </div>
-            <p
-              onClick={() => navigate(`/user-profile/${post.postedBy}`)}
-              className="font-bold hover:cursor-pointer"
-            >
-              {post.username}
-            </p>
-          </div>
+            <p className="font-bold hover:cursor-pointer">{post.username}</p>
+          </Link>
           <div
             style={getBackgroundImageStyle()}
             className="border border-base-300 max-w-full max-h-[300px] sm:max-h-[450px] carousel rounded-box"

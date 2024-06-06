@@ -11,10 +11,9 @@ import {
 
 function Posts() {
   const limit = 10;
-  const { posts } = useSelector((state) => state.data);
-  const { page } = useSelector((state) => state.data);
-  const { allPosts } = useSelector((state) => state.data);
-  const { error } = useSelector((state) => state.data);
+  const { posts, allPosts, page, error, loading } = useSelector(
+    (state) => state.data
+  );
   const { isLoggedIn } = useSelector((state) => state.user);
   const { darkMode } = useSelector((state) => state.theme);
   const dispatch = useDispatch();
@@ -87,11 +86,13 @@ function Posts() {
           Followings
         </button>
       </div>
-      {posts && !posts.length && (
+      {loading ? (
+        <div className="w-full my-8 text-center text-sm">Loading...</div>
+      ) : posts?.length ? (
+        posts.map((post) => <SingleCard key={post._id} postId={post._id} />)
+      ) : (
         <p className="p-4 text-center">No Post to show</p>
       )}
-      {posts &&
-        posts.map((post) => <SingleCard key={post._id} postId={post._id} />)}
       <div className="flex justify-center my-2">
         <div className="join drop-shadow-md">
           <button onClick={decrementPage} className="join-item btn btn-sm">

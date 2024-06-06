@@ -52,10 +52,7 @@ function PublicProfile() {
         followings,
       });
     } catch (error) {
-      toast.error(error.response.data.message);
-      if (error.response.status === 404) {
-        navigate("/not-found");
-      }
+      navigate("/not-found");
     } finally {
       setLoading(false);
     }

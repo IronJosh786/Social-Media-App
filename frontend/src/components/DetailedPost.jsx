@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "../axios.js";
 import { toast } from "sonner";
 import { base } from "../baseUrl.js";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import "../App.css";
 import SingleComment from "./SingleComment.jsx";
@@ -26,6 +26,7 @@ function DetailedPost() {
     commentsOnPost: [],
     isOwner: false,
     isAdmin: false,
+    postedBy: "",
   });
 
   const navigate = useNavigate();
@@ -41,7 +42,11 @@ function DetailedPost() {
         isOwner,
         isAdmin,
       } = response.data.data;
-      const { avatar, username } = response.data.data.ownerDetails[0];
+      const {
+        avatar,
+        username,
+        _id: postedBy,
+      } = response.data.data.ownerDetails[0];
       setPost({
         images,
         caption,
@@ -51,6 +56,7 @@ function DetailedPost() {
         username,
         isOwner,
         isAdmin,
+        postedBy,
       });
       setPostCaption(response.data.data.caption);
       if (isLoggedIn) {
@@ -68,10 +74,7 @@ function DetailedPost() {
         }
       }
     } catch (error) {
-      toast.error(error.message);
-      if (error.response.status === 404) {
-        navigate("/not-found");
-      }
+      navigate("/not-found");
     } finally {
       setLoading(false);
     }
@@ -278,7 +281,10 @@ function DetailedPost() {
           </dialog>
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between">
-              <div className="flex gap-4 items-center">
+              <Link
+                to={`/user-profile/${post.postedBy}`}
+                className="flex gap-4 items-center"
+              >
                 <div>
                   <img
                     className="h-10 w-10 rounded-full object-cover"
@@ -287,7 +293,7 @@ function DetailedPost() {
                   />
                 </div>
                 <div className="font-bold">{post.username}</div>
-              </div>
+              </Link>
               {(post.isOwner || post.isAdmin) && (
                 <div className="dropdown dropdown-end">
                   <div tabIndex={0} role="button" className="btn m-1">
@@ -428,9 +434,12 @@ function DetailedPost() {
               </div>
             </div>
             <div>
-              <span className="font-bold underline underline-offset-2">
+              <Link
+                to={`/user-profile/${post.postedBy}`}
+                className="font-bold underline underline-offset-2"
+              >
                 {post.username}
-              </span>{" "}
+              </Link>{" "}
               <span
                 className={`mt-2 py-4 ${
                   darkMode ? "border-neutral-700" : "border-base-300"
