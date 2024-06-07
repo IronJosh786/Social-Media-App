@@ -168,18 +168,20 @@ function Profile() {
       {loading ? (
         <div className="col-span-12 lg:col-span-6 flex flex-col gap-4 w-full p-4">
           <div className="flex gap-4 items-center">
-            <div className="skeleton w-16 h-16 rounded-full shrink-0"></div>
-            <div className="flex flex-col gap-4">
-              <div className="skeleton h-4 w-20"></div>
-              <div className="skeleton h-4 w-28"></div>
+            <div className="skeleton w-10 h-10 rounded-full shrink-0"></div>
+            <div className="flex flex-col gap-2">
+              <div className="skeleton h-3 w-20"></div>
+              <div className="skeleton h-3 w-28"></div>
             </div>
           </div>
           <div className="skeleton h-72 w-full"></div>
           <div className="skeleton h-4 w-28"></div>
           <div className="skeleton h-4 w-full"></div>
           <div className="skeleton h-4 w-full"></div>
-          <div className="skeleton h-12 w-full"></div>
-          <div className="skeleton h-12 w-full"></div>
+          <div className="skeleton h-16 w-full"></div>
+          <div className="skeleton h-16 w-full"></div>
+          <div className="skeleton h-16 w-full"></div>
+          <div className="skeleton h-16 w-full"></div>
         </div>
       ) : (
         <div
@@ -346,7 +348,7 @@ function Profile() {
           </div>
           <div className="mt-16 md:mt-24 px-4 w-full">
             <p className="uppercase font-bold">{userDetails.fullName}</p>
-            <p className="mt-2">@{userDetails.username}</p>
+            <p className="mt-1 font-bold">@{userDetails.username}</p>
             <p className="max-w-[60ch] mt-2 text-sm">{userDetails.bio}</p>
             <div className="flex gap-4 md:gap-8 mt-4 text-sm">
               <p>
