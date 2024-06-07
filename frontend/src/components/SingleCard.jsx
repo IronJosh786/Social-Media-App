@@ -236,14 +236,12 @@ function SingleCard({ postId }) {
             </button>
           </div>
           <p>
-            <span
-              onClick={() => {
-                navigate(`/user-profile/${post.postedBy}`);
-              }}
+            <Link
+              to={`/user-profile/${post.postedBy}`}
               className="font-bold underline underline-offset-2 hover:cursor-pointer"
             >
               {post.username}
-            </span>{" "}
+            </Link>{" "}
             {post.caption}
           </p>
         </div>
