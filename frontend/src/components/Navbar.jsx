@@ -15,11 +15,14 @@ function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const intervalRef = useRef(null);
+  const [loading, setLoading] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const { userData } = useSelector((state) => state.user);
   const { darkMode } = useSelector((state) => state.theme);
   const { isLoggedIn } = useSelector((state) => state.user);
-  const [profilePicture, setProfilePicture] = useState(null);
+  const [profilePicture, setProfilePicture] = useState(
+    "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+  );
   const isLoginPage = location.pathname.includes("/login");
   const isRegisterPage = location.pathname.includes("/register");
 
@@ -69,6 +72,8 @@ function Navbar() {
       setProfilePicture(response.data.data.avatar);
     } catch (error) {
       toast.error(error.response.data.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -103,6 +108,7 @@ function Navbar() {
     checkAuthenticationStatus();
     if (isLoggedIn) {
       intervalRef.current = setInterval(checkAuthenticationStatus, 60 * 1000);
+      setLoading(true);
       fetching();
     }
     return () => clearInterval(intervalRef.current);
@@ -158,13 +164,11 @@ function Navbar() {
               className="btn btn-ghost btn-circle avatar"
             >
               <div className="w-10 rounded-full bg-accent">
-                <img
-                  alt="profile picture"
-                  src={
-                    profilePicture ||
-                    "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
-                  }
-                />
+                {loading ? (
+                  <div className="skeleton w-10 h-10 rounded-full"></div>
+                ) : (
+                  <img alt="avatar" src={profilePicture} />
+                )}
               </div>
             </div>
             <ul
