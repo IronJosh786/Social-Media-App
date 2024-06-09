@@ -16,8 +16,8 @@ function SingleCard({ postId }) {
     postedBy: "",
   });
   const [isLiked, setIsLiked] = useState(false);
+  const [likeLoad, setLikeLoad] = useState(false);
   const [localLoad, setLocalLoad] = useState(false);
-
   const { posts } = useSelector((state) => state.data);
   const { darkMode } = useSelector((state) => state.theme);
   const { isLoggedIn } = useSelector((state) => state.user);
@@ -64,6 +64,8 @@ function SingleCard({ postId }) {
       setIsLiked(res.data.data);
     } catch (error) {
       toast.error(error.response.data.message);
+    } finally {
+      setLikeLoad(false);
     }
   };
 
@@ -86,7 +88,6 @@ function SingleCard({ postId }) {
       });
     } catch (error) {
       toast.error(error.response.data.message);
-      toast.error(error);
     } finally {
       setLocalLoad(false);
     }
@@ -109,6 +110,7 @@ function SingleCard({ postId }) {
       fetchProfilePostData();
     }
     if (isLoggedIn) {
+      setLikeLoad(true);
       fetchIsLiked(postId);
     }
   }, []);
@@ -171,56 +173,65 @@ function SingleCard({ postId }) {
             })}
           </div>
           <div className="flex justify-between items-center">
-            <div
-              className={`flex gap-4 items-center ${
-                isLiked ? "block" : "hidden"
-              }`}
-            >
-              <button
-                onClick={handleLikeClick}
-                className="h-6 w-6 active:scale-90 transition all ease-in-out duration-200"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
+            {likeLoad ? (
+              <div
+                className="loader border-t-2 rounded-full border-gray-500 bg-gray-300 animate-spin
+              aspect-square w-6 flex justify-center items-center text-yellow-700"
+              ></div>
+            ) : (
+              <>
+                <div
+                  className={`flex gap-4 items-center ${
+                    isLiked ? "block" : "hidden"
+                  }`}
                 >
-                  <path
-                    fill="red"
-                    d="M12.001 4.52853C14.35 2.42 17.98 2.49 20.2426 4.75736C22.5053 7.02472 22.583 10.637 20.4786 12.993L11.9999 21.485L3.52138 12.993C1.41705 10.637 1.49571 7.01901 3.75736 4.75736C6.02157 2.49315 9.64519 2.41687 12.001 4.52853Z"
-                  ></path>
-                </svg>
-              </button>{" "}
-              <span className="font-bold">
-                {post.totalLikeCount}
-                <span className="font-normal"> Likes</span>
-              </span>
-            </div>
-            <div
-              className={`flex gap-4 items-center ${
-                isLiked ? "hidden" : "block"
-              }`}
-            >
-              <button
-                onClick={handleLikeClick}
-                className="h-6 w-6 active:scale-90 transition all ease-in-out duration-200"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className={`${
+                  <button
+                    onClick={handleLikeClick}
+                    className="h-6 w-6 active:scale-90 transition all ease-in-out duration-200"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path
+                        fill="red"
+                        d="M12.001 4.52853C14.35 2.42 17.98 2.49 20.2426 4.75736C22.5053 7.02472 22.583 10.637 20.4786 12.993L11.9999 21.485L3.52138 12.993C1.41705 10.637 1.49571 7.01901 3.75736 4.75736C6.02157 2.49315 9.64519 2.41687 12.001 4.52853Z"
+                      ></path>
+                    </svg>
+                  </button>{" "}
+                  <span className="font-bold">
+                    {post.totalLikeCount}
+                    <span className="font-normal"> Likes</span>
+                  </span>
+                </div>
+                <div
+                  className={`flex gap-4 items-center ${
                     isLiked ? "hidden" : "block"
-                  } hover:fill-red-600 transition all ease-in-out duration-150`}
+                  }`}
                 >
-                  <path d="M12.001 4.52853C14.35 2.42 17.98 2.49 20.2426 4.75736C22.5053 7.02472 22.583 10.637 20.4786 12.993L11.9999 21.485L3.52138 12.993C1.41705 10.637 1.49571 7.01901 3.75736 4.75736C6.02157 2.49315 9.64519 2.41687 12.001 4.52853ZM18.827 6.1701C17.3279 4.66794 14.9076 4.60701 13.337 6.01687L12.0019 7.21524L10.6661 6.01781C9.09098 4.60597 6.67506 4.66808 5.17157 6.17157C3.68183 7.66131 3.60704 10.0473 4.97993 11.6232L11.9999 18.6543L19.0201 11.6232C20.3935 10.0467 20.319 7.66525 18.827 6.1701Z"></path>
-                </svg>
-              </button>{" "}
-              <span className="font-bold">
-                {post.totalLikeCount}
-                <span className="font-normal"> Likes</span>
-              </span>
-            </div>
+                  <button
+                    onClick={handleLikeClick}
+                    className="h-6 w-6 active:scale-90 transition all ease-in-out duration-200"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className={`${
+                        isLiked ? "hidden" : "block"
+                      } hover:fill-red-600 transition all ease-in-out duration-150`}
+                    >
+                      <path d="M12.001 4.52853C14.35 2.42 17.98 2.49 20.2426 4.75736C22.5053 7.02472 22.583 10.637 20.4786 12.993L11.9999 21.485L3.52138 12.993C1.41705 10.637 1.49571 7.01901 3.75736 4.75736C6.02157 2.49315 9.64519 2.41687 12.001 4.52853ZM18.827 6.1701C17.3279 4.66794 14.9076 4.60701 13.337 6.01687L12.0019 7.21524L10.6661 6.01781C9.09098 4.60597 6.67506 4.66808 5.17157 6.17157C3.68183 7.66131 3.60704 10.0473 4.97993 11.6232L11.9999 18.6543L19.0201 11.6232C20.3935 10.0467 20.319 7.66525 18.827 6.1701Z"></path>
+                    </svg>
+                  </button>{" "}
+                  <span className="font-bold">
+                    {post.totalLikeCount}
+                    <span className="font-normal"> Likes</span>
+                  </span>
+                </div>
+              </>
+            )}
             <button
               className="h-6 w-6 active:scale-90 transition all ease-in-out duration-200 hover:cursor-pointer"
               onClick={() => navigate(`/detailedPost/${post._id}`)}

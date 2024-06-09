@@ -78,7 +78,6 @@ function Navbar() {
   };
 
   const checkAuthenticationStatus = () => {
-    console.log("check");
     const currTime = Date.now();
     const localStorageItem = JSON.parse(localStorage.getItem("isLoggedIn"));
     const expirationTime = localStorageItem?.expiresIn;
@@ -93,7 +92,6 @@ function Navbar() {
     if (!isLoggedIn && intervalRef.current !== null) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
-      console.log("cleared");
       navigate(0);
     }
   };
