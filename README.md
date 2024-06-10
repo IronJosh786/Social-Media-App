@@ -4,7 +4,7 @@ This is a social media web application built using the MERN (MongoDB, Express.js
 
 ## Live Demo
 
-Check out the live demo of the Social Media Web Application: [Live Demo](https://frontend-production-391c.up.railway.app/)
+Check out the live demo of the Social Media Web Application: [Live Demo](https://social-sphere-two.vercel.app/)
 
 ## Features
 
